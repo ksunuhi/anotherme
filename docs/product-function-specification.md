@@ -10,7 +10,7 @@
 ## 1. Project Overview
 
 ### 1.1 Purpose
-A social networking platform that connects people who share the same birthday, fostering unique communities based on birth dates. Users can discover others born on the same day, communicate through messaging and posts, and join birthday-based communities.
+A social networking platform that connects people who share the exact same birthday (same year, month, and day), fostering unique communities based on birth dates. Users can discover others born on the exact same date, communicate through messaging and posts, and join birthday-based communities.
 
 ### 1.2 Target Audience
 - Individuals interested in connecting with birthday twins
@@ -56,9 +56,6 @@ A social networking platform that connects people who share the same birthday, f
 
 #### 2.1.3 Security Requirements
 - Password hashing (bcrypt)
-- HTTPS only
-- CSRF protection
-- Rate limiting on login attempts
 - Session timeout after 30 days of inactivity
 
 ---
@@ -68,7 +65,7 @@ A social networking platform that connects people who share the same birthday, f
 #### 2.2.1 Profile Information
 **Public Information:**
 - Display name
-- Birthday (month/day only, year optional)
+- Birthday (full date: year/month/day)
 - City/Region
 - Gender (if user chooses to display)
 - Profile picture
@@ -77,7 +74,6 @@ A social networking platform that connects people who share the same birthday, f
 
 **Private Information:**
 - Email address
-- Full date of birth (year)
 - Exact address (not collected)
 - Password
 
@@ -92,16 +88,15 @@ A social networking platform that connects people who share the same birthday, f
 ### 2.3 Birthday Matching & Search
 
 #### 2.3.1 Automatic Matching
-- System automatically finds users with the same birthday (month/day)
+- System automatically finds users with the exact same birthday (year/month/day)
 - Display birthday matches on user dashboard
-- Show number of birthday twins on platform
+- Show number of birthday twins on platform (born on the same exact date)
 
 #### 2.3.2 Search & Filter Functionality
 **Search Criteria:**
-- Birthday (specific date or month)
+- Birthday (exact date: year/month/day)
 - City/Region
 - Gender
-- Age range (calculated from birth year if public)
 
 **Search Results Display:**
 - Profile picture
@@ -154,7 +149,8 @@ A social networking platform that connects people who share the same birthday, f
 
 **Post Visibility Options:**
 - Public (visible to all users)
-- Birthday twins only (same birthday)
+- Birthday twins only (same exact birthday: year/month/day)
+- Friends only (visible to your friends)
 - Specific group only
 
 **Post Features:**
@@ -182,7 +178,7 @@ A social networking platform that connects people who share the same birthday, f
 #### 2.5.3 Feed Algorithm
 **Main Feed:**
 - Chronological display of posts
-- Filter options: All posts, Birthday twins only, Following
+- Filter options: All posts, Birthday twins only, Friends only
 - Pagination (20 posts per page)
 
 ---
@@ -191,8 +187,8 @@ A social networking platform that connects people who share the same birthday, f
 
 #### 2.6.1 Birthday-Based Groups
 **Auto-Generated Groups:**
-- Each unique birthday has an automatic group (e.g., "January 1st Community")
-- Users are automatically members of their birthday group
+- Each unique birthday (year/month/day) has an automatic group (e.g., "Born on January 1, 1990")
+- Users are automatically members of their exact birthday group
 - Group member count visible
 
 #### 2.6.2 Group Features
@@ -215,11 +211,56 @@ A social networking platform that connects people who share the same birthday, f
 
 ---
 
+### 2.7 My Friends Feature
+
+#### 2.7.1 Friend System Overview
+**Type:** One-way friendship (similar to Twitter follow)
+- Users can add other users as friends
+- No mutual acceptance required
+- Both users must add each other to be "mutual friends"
+- Quick access to friends' activities
+
+#### 2.7.2 Friend Actions
+**Adding Friends:**
+- Click "Add Friend" button on user profile
+- User is immediately added to your friends list
+- Optional notification to the other user (they are informed someone added them)
+
+**Friend List Management:**
+- View all friends in "My Friends" page
+- Remove friends anytime
+- See mutual friends (users who also added you back)
+
+#### 2.7.3 Friend Benefits
+**Quick Access:**
+- Dedicated "Friends" section in navigation
+- See all friends in one place
+- Quick message button for each friend
+
+**Friends Feed:**
+- Filter main feed to show only friends' posts
+- See friends' activities and updates
+- Dedicated "Friends only" post visibility option
+
+**Friend Indicators:**
+- Badge showing if users are mutual friends
+- See friend count on profiles
+- Friend activity indicators
+
+#### 2.7.4 Privacy & Controls
+- Users can hide their friends list (privacy setting)
+- Users can prevent others from adding them as friends
+- Block functionality prevents friendship
+
+---
+
 ## 3. User Roles & Permissions
 
 ### 3.1 Regular User
 - Create and manage own profile
 - Search for users
+- Add/remove friends
+- View friends list and friends feed
 - Send messages
 - Create posts and comments
 - Join birthday groups
@@ -280,7 +321,7 @@ Post {
   author_id: UUID (foreign key to User)
   title: String (max 200 chars)
   content: Text (max 2000 chars, required)
-  visibility: Enum (public, birthday_twins, group)
+  visibility: Enum (public, birthday_twins, friends, group)
   group_id: UUID (nullable, foreign key to Group)
   like_count: Integer (default: 0)
   comment_count: Integer (default: 0)
@@ -310,8 +351,9 @@ Group {
   name: String (required)
   description: Text
   group_type: Enum (birthday, custom)
-  birth_month: Integer (1-12, nullable)
-  birth_day: Integer (1-31, nullable)
+  birth_year: Integer (nullable, for birthday groups)
+  birth_month: Integer (1-12, nullable, for birthday groups)
+  birth_day: Integer (1-31, nullable, for birthday groups)
   member_count: Integer (default: 0)
   created_at: DateTime
   updated_at: DateTime
@@ -326,6 +368,21 @@ GroupMembership {
   group_id: UUID (foreign key to Group)
   joined_at: DateTime
   is_active: Boolean (default: true)
+}
+```
+
+### 4.7 Friendship Model
+```
+Friendship {
+  id: UUID
+  user_id: UUID (foreign key to User - the person who added the friend)
+  friend_id: UUID (foreign key to User - the person being added as friend)
+  created_at: DateTime
+
+  Note: One-way relationship. If both users add each other,
+  two separate Friendship records exist (mutual friends).
+
+  Unique constraint: (user_id, friend_id) - prevent duplicate friendships
 }
 ```
 
@@ -381,6 +438,15 @@ GroupMembership {
 - `POST /api/groups/{group_id}/leave` - Leave group
 - `GET /api/groups/{group_id}/posts` - Get group posts
 
+### 5.8 Friends
+- `GET /api/friends` - Get current user's friends list
+- `GET /api/friends/mutual` - Get mutual friends
+- `GET /api/users/{user_id}/friends` - Get another user's friends list (if not private)
+- `POST /api/friends/{user_id}` - Add user as friend
+- `DELETE /api/friends/{user_id}` - Remove friend
+- `GET /api/friends/check/{user_id}` - Check if user is your friend / mutual friend
+- `GET /api/posts/friends-feed` - Get posts from friends only
+
 ---
 
 ## 6. Non-Functional Requirements
@@ -391,10 +457,8 @@ GroupMembership {
 - Support 1000+ concurrent users (Phase 1)
 
 ### 6.2 Security
-- All data transmission over HTTPS
 - SQL injection prevention
 - XSS protection
-- CSRF tokens for state-changing operations
 - Regular security audits
 
 ### 6.3 Accessibility
@@ -418,7 +482,6 @@ GroupMembership {
 - Video/voice calling
 - Image and file sharing in messages
 - Advanced search filters (interests, hobbies)
-- Friend/connection system
 - Birthday reminders and notifications
 - Birthday countdown widgets
 - Virtual birthday parties/events
@@ -466,11 +529,13 @@ GroupMembership {
 **Timeline:** 4-6 weeks
 - User registration (email + password only)
 - Basic profile management
-- Birthday matching
-- Simple search (by birthday, city, gender)
+- Birthday matching (exact date: year/month/day)
+- Simple search (by exact birthday, city, gender)
+- Friend system (one-way, add/remove friends)
+- Friends feed and friends-only posts
 - Asynchronous messaging
 - Basic post creation and commenting
-- Auto-generated birthday groups
+- Auto-generated birthday groups (by exact date)
 - Responsive UI
 
 ### Phase 2: Enhanced Features
@@ -486,7 +551,6 @@ GroupMembership {
 ### Phase 3: Community & Growth
 **Timeline:** 6-8 weeks
 - Custom groups
-- Friend/connection system
 - Enhanced moderation tools
 - Admin dashboard
 - Analytics and insights
@@ -532,7 +596,9 @@ GroupMembership {
 
 ## Appendix A: Glossary
 
-- **Birthday Twin:** Users who share the same birth month and day
+- **Birthday Twin:** Users who share the exact same birthday (year, month, and day)
+- **Mutual Friends:** Two users who have both added each other as friends
+- **One-way Friendship:** A user can add another as a friend without reciprocation (similar to Twitter follow)
 - **Asynchronous Messaging:** Message system that doesn't require real-time updates
 - **Discovery:** Ability for users to be found in search results
 - **OAuth:** Open standard for access delegation (social login)

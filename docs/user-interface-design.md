@@ -1,5 +1,5 @@
 # User Interface Design Document
-## Birthday Social Network Platform
+## AnotherMe - Birthday Social Network Platform
 
 **Version:** 1.0
 **Last Updated:** 2025-11-17
@@ -11,8 +11,9 @@
 
 ### 1.1 Design Principles
 - **Simplicity:** Clean, intuitive interface that's easy to navigate
-- **Birthday-Centric:** Visual elements that emphasize the birthday theme
-- **Community-Focused:** Design that encourages social interaction
+- **Professional & Mature:** Modern, sophisticated design for adult users
+- **Connection-Focused:** Visual elements that emphasize meaningful connections
+- **Community-Driven:** Design that encourages authentic social interaction and storytelling
 - **Responsive:** Seamless experience across desktop, tablet, and mobile
 - **Accessible:** WCAG 2.1 AA compliant with high contrast and readable fonts
 
@@ -31,8 +32,8 @@ Primary Colors:
 - Primary Light: #A5B4FC (Indigo-300) - Backgrounds, subtle highlights
 
 Secondary Colors:
-- Birthday Pink: #EC4899 (Pink-500) - Birthday badges, celebrations
-- Birthday Purple: #A855F7 (Purple-500) - Special events, groups
+- Accent Purple: #A855F7 (Purple-500) - Special highlights, badges
+- Accent Teal: #14B8A6 (Teal-500) - Secondary actions, variety
 
 Neutral Colors:
 - Background: #FFFFFF (White) - Main background
@@ -83,15 +84,15 @@ Body:
 
 **Desktop Layout:**
 ```
-┌────────────────────────────────────────────────────────────────┐
-│  🎂 BirthdayConnect    Home  Matches  Groups  Messages         │
-│                                                                 │
-│                                        🔍 Search    👤 Profile │
-└────────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────────┐
+│  AM  AnotherMe    Home  Friends  Matches  Groups  Messages        │
+│                                                                     │
+│                                          🔍 Search    👤 Profile   │
+└────────────────────────────────────────────────────────────────────┘
 
 Components:
-- Logo (left): Icon + "BirthdayConnect" text
-- Navigation links (center): Home, Matches, Groups, Messages
+- Logo (left): "AM" monogram + "AnotherMe" text (clean, professional)
+- Navigation links (center): Home, Friends, Matches, Groups, Messages
 - Search bar (right): Expandable search input
 - User menu (right): Profile picture dropdown
 ```
@@ -99,7 +100,7 @@ Components:
 **Mobile Layout:**
 ```
 ┌────────────────────────────┐
-│ ☰  🎂 BirthdayConnect  🔍 │
+│ ☰  AM AnotherMe  🔍 │
 └────────────────────────────┘
 
 - Hamburger menu (left)
@@ -123,7 +124,7 @@ Components:
 ```
 ┌──────────────────────────────────────────────────┐
 │                                                  │
-│              🎂 BirthdayConnect                  │
+│              AM AnotherMe                  │
 │                                                  │
 │         Connect with your birthday twins!        │
 │                                                  │
@@ -214,39 +215,52 @@ Design Notes:
 │  ┌──────────────────────┐  ┌───────────────────────────────┐   │
 │  │  Your Birthday       │  │  Main Feed                    │   │
 │  │                      │  │  ┌─ Create Post ──────────┐   │   │
-│  │  🎂 March 15         │  │  │ What's on your mind?   │   │   │
+│  │  📅 March 15, 1990   │  │  │ What's on your mind?   │   │   │
 │  │                      │  │  └────────────────────────┘   │   │
-│  │  🎉 123 birthday     │  │                               │   │
-│  │     twins found!     │  │  ┌─ Post Card ────────────┐   │   │
-│  │                      │  │  │ 👤 John Doe            │   │   │
-│  │  [Find Matches]      │  │  │ 🎂 March 15 · 2h ago   │   │   │
+│  │  🎉 15 birthday      │  │                               │   │
+│  │     twins found!     │  │  [All] [Friends] [Twins]      │   │
+│  │                      │  │  Feed Filter ▼                │   │
+│  │  [Find Matches]      │  │                               │   │
+│  │                      │  │  ┌─ Post Card ────────────┐   │   │
+│  ├──────────────────────┤  │  │ 👤 John Doe  [✓Friend] │   │   │
+│  │  My Friends (45)     │  │  │ 📅 March 15 · 2h ago   │   │   │
 │  │                      │  │  │                        │   │   │
-│  ├──────────────────────┤  │  │ Happy birthday to all  │   │   │
-│  │  Recent Matches      │  │  │ my March 15 twins!     │   │   │
+│  │  [👤] Sarah J.       │  │  │ Happy birthday to all  │   │   │
+│  │  ✓ Mutual            │  │  │ my March 15 twins!     │   │   │
 │  │                      │  │  │                        │   │   │
-│  │  [👤] Sarah J.       │  │  │ ❤️ 24  💬 5           │   │   │
-│  │  March 15 • NYC      │  │  └────────────────────────┘   │   │
+│  │  [👤] Mike Chen      │  │  │ ❤️ 24  💬 5           │   │   │
+│  │                      │  │  └────────────────────────┘   │   │
 │  │                      │  │                               │   │
-│  │  [👤] Mike Chen      │  │  ┌─ Post Card ────────────┐   │   │
-│  │  March 15 • LA       │  │  │ ...                    │   │   │
-│  │                      │  │  └────────────────────────┘   │   │
-│  │  [View All]          │  └───────────────────────────────┘   │
+│  │  [View All Friends]  │  │  ┌─ Post Card ────────────┐   │   │
+│  │                      │  │  │ ...                    │   │   │
+│  ├──────────────────────┤  │  └────────────────────────┘   │   │
+│  │  Recent Matches      │  └───────────────────────────────┘   │
 │  │                      │                                      │
-│  ├──────────────────────┤  ┌───────────────────────────────┐   │
-│  │  Your Groups         │  │  Suggested Connections        │   │
+│  │  [👤] Alex Kim       │  ┌───────────────────────────────┐   │
+│  │  March 15, 1990      │  │  Suggested Friends            │   │
 │  │                      │  │                               │   │
-│  │  🎂 March 15 Club    │  │  [👤] [👤] [👤] [👤]         │   │
-│  │     234 members      │  │                               │   │
-│  │                      │  │  Birthday twins near you!     │   │
-│  │  [View Group]        │  └───────────────────────────────┘   │
+│  │  [View All Matches]  │  │  [👤] [👤] [👤] [👤]         │   │
+│  │                      │  │                               │   │
+│  ├──────────────────────┤  │  Birthday twins near you!     │   │
+│  │  Your Groups         │  └───────────────────────────────┘   │
+│  │                      │                                      │
+│  │  📅 March 15, 1990   │                                      │
+│  │     15 members       │                                      │
+│  │                      │                                      │
+│  │  [View Group]        │                                      │
 │  └──────────────────────┘                                      │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 
 Layout Structure:
-- Left Sidebar (25%): User stats, matches, groups
-- Center Feed (50%): Posts and interactions
-- Right Sidebar (25%): Suggestions, ads (future)
+- Left Sidebar (25%): User stats, friends widget, matches, groups
+- Center Feed (50%): Posts with feed filter (All/Friends/Twins)
+- Right Sidebar (25%): Suggested friends, ads (future)
+
+Feed Filter Options:
+- **All**: Show all public posts
+- **Friends**: Show only posts from friends
+- **Twins**: Show only posts from birthday twins (same exact birthdate)
 ```
 
 **Mobile Layout:**
@@ -299,15 +313,15 @@ Layout Structure:
 │  │         └──────────┘                                 │   │
 │  └──────────────────────────────────────────────────────┘   │
 │                                                             │
-│  ┌──────────────────────────────────────────────────────┐   │
-│  │                                                       │   │
-│  │    John Doe                        [Message] [Edit]  │   │
-│  │    🎂 March 15  📍 New York, NY    Gender: Male      │   │
-│  │    Member since: Jan 2025                            │   │
-│  │                                                       │   │
-│  │    Bio: Love connecting with birthday twins...       │   │
-│  │                                                       │   │
-│  └──────────────────────────────────────────────────────┘   │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │                                                           │   │
+│  │    John Doe              [Add Friend] [Message] [Edit]   │   │
+│  │    📅 March 15, 1990  📍 New York, NY    Gender: Male    │   │
+│  │    Member since: Jan 2025   👥 45 friends                │   │
+│  │                                                           │   │
+│  │    Bio: Love connecting with birthday twins...           │   │
+│  │                                                           │   │
+│  └──────────────────────────────────────────────────────────┘   │
 │                                                             │
 │  ┌────────┬────────┬────────┐                              │
 │  │  Posts │ Groups │ About  │  (Tab Navigation)            │
@@ -331,9 +345,14 @@ Layout Structure:
 Components:
 - Profile header with cover gradient
 - Large profile picture (150x150px, circular)
-- User info (name, birthday, location, gender)
-- Action buttons: Message, Edit Profile (own profile only)
-- Tab navigation: Posts, Groups, About
+- User info (name, birthday, location, gender, friend count)
+- Action buttons:
+  - **Add Friend** (shows when not friends, primary button)
+  - **Remove Friend** (shows when already friends, secondary button)
+  - **✓ Friends** (shows when mutual friends, with checkmark badge)
+  - **Message** (always visible for other users)
+  - **Edit Profile** (only on own profile)
+- Tab navigation: Posts, Groups, Friends (on other user profiles), About
 - Content area based on active tab
 ```
 
@@ -342,15 +361,20 @@ Components:
 ┌────────────────────────┐
 │   ┌──────┐             │
 │   │ Pic  │  Sarah J.   │
-│   └──────┘             │
-│   🎂 March 15          │
+│   └──────┘   [✓ Mutual]│
+│   📅 March 15, 1990    │
 │   📍 NYC, NY           │
 │                        │
 │   "Love birthdays..."  │
 │                        │
-│   [View Profile]       │
+│   [Add Friend]         │
 │   [Message]            │
 └────────────────────────┘
+
+States:
+- [Add Friend] - Not friends yet
+- [✓ Friends] - Already added (with checkmark)
+- [✓ Mutual] - Mutual friends badge
 ```
 
 ---
@@ -370,7 +394,7 @@ Components:
 │  │ [Mar ▼] [15 ▼]  │  │                               │    │
 │  │                  │  │  ┌──────────────────────────┐ │    │
 │  │ Location         │  │  │  [👤] Sarah Johnson      │ │    │
-│  │ [New York    ▼]  │  │  │  🎂 March 15             │ │    │
+│  │ [New York    ▼]  │  │  │  📅 March 15             │ │    │
 │  │                  │  │  │  📍 New York, NY         │ │    │
 │  │ Gender           │  │  │  "Birthday enthusiast"   │ │    │
 │  │ ○ All            │  │  │  [View] [Message]        │ │    │
@@ -378,7 +402,7 @@ Components:
 │  │ ● Female         │  │                               │    │
 │  │ ○ Other          │  │  ┌──────────────────────────┐ │    │
 │  │                  │  │  │  [👤] Mike Chen          │ │    │
-│  │ Age Range        │  │  │  🎂 March 15             │ │    │
+│  │ Age Range        │  │  │  📅 March 15             │ │    │
 │  │ [18] - [65]      │  │  │  📍 Los Angeles, CA      │ │    │
 │  │ ────○─────○────  │  │  │  "LA birthday twin!"     │ │    │
 │  │                  │  │  │  [View] [Message]        │ │    │
@@ -501,7 +525,7 @@ Chat View:
 │  ┌─ My Groups ──────────────────────────────────────────┐   │
 │  │                                                       │   │
 │  │  ┌──────────────────────────────────────────────┐    │   │
-│  │  │  🎂 March 15 Birthday Club                   │    │   │
+│  │  │  📅 March 15 Birthday Club                   │    │   │
 │  │  │                                               │    │   │
 │  │  │  234 members · 45 posts this week            │    │   │
 │  │  │  Your birthday group!                        │    │   │
@@ -535,7 +559,7 @@ Chat View:
 ├─────────────────────────────────────────────────────────────┤
 │                                                             │
 │  ┌──────────────────────────────────────────────────────┐   │
-│  │  🎂 March 15 Birthday Club                           │   │
+│  │  📅 March 15 Birthday Club                           │   │
 │  │                                                       │   │
 │  │  Born on March 15? You're in the right place!        │   │
 │  │                                                       │   │
@@ -584,7 +608,7 @@ Chat View:
 │  ┌──────────────────────────────────────────────────────┐   │
 │  │  ┌────┐                                              │   │
 │  │  │ 👤 │  Sarah Johnson                               │   │
-│  │  └────┘  🎂 March 15 · New York, NY                  │   │
+│  │  └────┘  📅 March 15 · New York, NY                  │   │
 │  │          Posted 2 hours ago                          │   │
 │  │                                                       │   │
 │  │  ─────────────────────────────────────────────────   │   │
@@ -639,6 +663,108 @@ Features:
 - Nested comments (1 level)
 - Like individual comments
 - Reply to comments
+```
+
+---
+
+### 2.9 My Friends Page
+
+**Desktop Layout:**
+```
+┌─────────────────────────────────────────────────────────────┐
+│  [Navigation Bar]                                           │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  My Friends                                [🔍 Search]     │
+│                                                             │
+│  ┌─ Tabs ──────────────────────────────────────────────┐   │
+│  │  All Friends (45)  │  Mutual Friends (23)           │   │
+│  └──────────────────────────────────────────────────────┘   │
+│                                                             │
+│  ┌─ Friends List ───────────────────────────────────────┐   │
+│  │                                                       │   │
+│  │  ┌──────────────────────────────────────────────┐    │   │
+│  │  │  ┌────┐                                      │    │   │
+│  │  │  │👤  │  Sarah Johnson        [✓ Mutual]    │    │   │
+│  │  │  └────┘  📅 March 15, 1990                  │    │   │
+│  │  │          📍 New York, NY                     │    │   │
+│  │  │                                              │    │   │
+│  │  │          "Love connecting with twins..."     │    │   │
+│  │  │                                              │    │   │
+│  │  │          [Message]  [View Profile]  [Remove]│    │   │
+│  │  └──────────────────────────────────────────────┘    │   │
+│  │                                                       │   │
+│  │  ┌──────────────────────────────────────────────┐    │   │
+│  │  │  ┌────┐                                      │    │   │
+│  │  │  │👤  │  Mike Chen                          │    │   │
+│  │  │  └────┘  📅 March 15, 1990                  │    │   │
+│  │  │          📍 Los Angeles, CA                  │    │   │
+│  │  │                                              │    │   │
+│  │  │          "Birthday twin from LA!"            │    │   │
+│  │  │                                              │    │   │
+│  │  │          [Message]  [View Profile]  [Remove]│    │   │
+│  │  └──────────────────────────────────────────────┘    │   │
+│  │                                                       │   │
+│  │  ┌──────────────────────────────────────────────┐    │   │
+│  │  │  [More friend cards...]                      │    │   │
+│  │  └──────────────────────────────────────────────┘    │   │
+│  │                                                       │   │
+│  └───────────────────────────────────────────────────────┘   │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+
+Features:
+- Tab navigation: All Friends / Mutual Friends
+- Friend count badges
+- Search friends by name
+- Friend cards with:
+  - Profile picture
+  - Name, birthday, location
+  - Bio preview
+  - Mutual friend badge (if applicable)
+  - Quick action buttons: Message, View Profile, Remove
+- Grid layout for desktop (2-3 columns)
+- List layout for mobile (1 column)
+```
+
+**Mobile Layout:**
+```
+┌───────────────────────┐
+│ My Friends       🔍   │
+├───────────────────────┤
+│ All (45) | Mutual(23)│
+├───────────────────────┤
+│                       │
+│  ┌────────────────┐   │
+│  │ 👤 Sarah J.    │   │
+│  │ ✓ Mutual       │   │
+│  │ 🎂 Mar 15, 1990│   │
+│  │ 📍 NYC         │   │
+│  │ [Msg] [Remove] │   │
+│  └────────────────┘   │
+│                       │
+│  ┌────────────────┐   │
+│  │ 👤 Mike Chen   │   │
+│  │ 🎂 Mar 15, 1990│   │
+│  │ 📍 Los Angeles │   │
+│  │ [Msg] [Remove] │   │
+│  └────────────────┘   │
+│                       │
+└───────────────────────┘
+```
+
+**Empty State:**
+```
+┌────────────────────────┐
+│     👥                 │
+│                        │
+│  No friends yet        │
+│                        │
+│  Start adding friends  │
+│  to see their updates! │
+│                        │
+│  [Find Birthday Twins] │
+└────────────────────────┘
 ```
 
 ---
@@ -717,15 +843,15 @@ Metadata: Small gray text
 
 ### 3.4 Badges
 
-**Birthday Badge:**
+**Birthdate Badge:**
 ```css
-Background: #EC4899 (Pink)
+Background: #A855F7 (Purple-500) - Professional, mature
 Text: White
 Padding: 0.25rem 0.75rem
-Border-radius: 9999px (full rounded)
+Border-radius: 0.375rem (slightly rounded, modern)
 Font-size: 0.75rem
 Font-weight: 600
-Icon: 🎂
+No icon - clean text only
 ```
 
 **Notification Badge:**
@@ -735,6 +861,27 @@ Text: White
 Size: 20px circle
 Position: Absolute top-right
 Font-size: 0.625rem
+```
+
+**Friend Badge:**
+```css
+/* Friend Badge (✓ Friend) */
+Background: #6366F1 (Primary)
+Text: White
+Padding: 0.25rem 0.75rem
+Border-radius: 9999px (full rounded)
+Font-size: 0.75rem
+Font-weight: 600
+Icon: ✓
+
+/* Mutual Friend Badge (✓ Mutual) */
+Background: #10B981 (Green)
+Text: White
+Padding: 0.25rem 0.75rem
+Border-radius: 9999px (full rounded)
+Font-size: 0.75rem
+Font-weight: 600
+Icon: ✓
 ```
 
 ### 3.5 Avatars
@@ -932,6 +1079,60 @@ xl: 1280px+
 14. Conversation continues...
 ```
 
+### 5.5 Adding Friends Flow
+
+```
+1. User browses platform
+   - Dashboard
+   - Search/Matches page
+   - Birthday twin profile
+   ↓
+2. Finds interesting user (birthday twin, similar interests, etc.)
+   ↓
+3. Clicks "View Profile" or navigates to user profile
+   ↓
+4. Reviews user's profile
+   - Posts, bio, location
+   - See if they have mutual friends
+   ↓
+5. Clicks "Add Friend" button
+   ↓
+6. Button changes to "✓ Friends" (success feedback)
+   - Toast notification: "You are now friends with [Name]"
+   - Friend count updates (+1)
+   ↓
+7. User is added to "My Friends" list
+   ↓
+8. Optional: Other user receives notification
+   - "[Your name] added you as a friend"
+   ↓
+9. Can now see friend's posts in Friends feed filter
+   ↓
+10. If other user also adds you back:
+    - Badge changes to "✓ Mutual Friends"
+    - Relationship becomes two-way
+```
+
+### 5.6 Viewing Friends Feed Flow
+
+```
+1. User on Dashboard/Home Page
+   ↓
+2. Clicks "Friends" filter tab above feed
+   ↓
+3. Feed refreshes to show only friends' posts
+   - Posts from users you've added as friends
+   - Chronological order
+   ↓
+4. Friend indicator badge shown on each post
+   - "✓ Friend" or "✓ Mutual" badge
+   ↓
+5. User can interact normally
+   - Like, comment, share
+   ↓
+6. Click "All" to return to full feed
+```
+
 ---
 
 ## 6. Interactive States
@@ -981,6 +1182,20 @@ xl: 1280px+
 │  something!            │
 │                        │
 │  [Create Post]         │
+└────────────────────────┘
+```
+
+**No Friends:**
+```
+┌────────────────────────┐
+│     👥                 │
+│                        │
+│  No friends yet        │
+│                        │
+│  Start adding friends  │
+│  to see their updates! │
+│                        │
+│  [Find Birthday Twins] │
 └────────────────────────┘
 ```
 
@@ -1103,8 +1318,8 @@ transition: transform 200ms ease-out;
 │     [Content Area]          │
 │                             │
 ├─────────────────────────────┤
-│ 🏠   🔍   💬   👤          │
-│Home Search Msgs Profile     │
+│ 🏠   👥   💬   👤          │
+│Home Friends Msgs Profile    │
 └─────────────────────────────┘
 ```
 
@@ -1128,11 +1343,18 @@ App.vue
 └── Router View
     ├── HomePage.vue
     │   ├── BirthdayStats.vue
+    │   ├── FriendsWidget.vue
+    │   ├── FeedFilter.vue
     │   ├── PostComposer.vue
     │   ├── PostCard.vue
     │   └── SuggestedMatches.vue
+    ├── FriendsPage.vue
+    │   ├── FriendTabs.vue (All Friends / Mutual Friends)
+    │   ├── FriendCard.vue
+    │   └── FriendSearch.vue
     ├── ProfilePage.vue
     │   ├── ProfileHeader.vue
+    │   ├── FriendshipButton.vue (Add/Remove Friend states)
     │   ├── ProfileTabs.vue
     │   └── PostCard.vue
     ├── MessagesPage.vue
@@ -1140,10 +1362,16 @@ App.vue
     │   └── ChatWindow.vue
     ├── SearchPage.vue
     │   ├── SearchFilters.vue
-    │   └── UserCard.vue
+    │   └── UserCard.vue (with Add Friend button)
     └── GroupsPage.vue
         ├── GroupCard.vue
         └── GroupDetail.vue
+
+Shared Components:
+├── FriendBadge.vue (✓ Friend, ✓ Mutual badges)
+├── UserAvatar.vue
+├── PostCard.vue (with friend indicators)
+└── EmptyState.vue (No Friends, No Posts, etc.)
 ```
 
 ### 10.2 Tailwind CSS Usage
@@ -1169,10 +1397,13 @@ App.vue
 ## 11. Design Assets Needed
 
 ### 11.1 Icons
-- Birthday cake (various sizes)
 - Search (magnifying glass)
 - Message/chat bubble
 - User profile
+- Users/People (friends icon - 👥)
+- User plus (add friend)
+- User minus (remove friend)
+- User check (friend added/mutual)
 - Settings gear
 - Heart (like)
 - Comment bubble
