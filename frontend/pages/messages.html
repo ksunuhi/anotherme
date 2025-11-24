@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages - AnotherMe</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366F1',
+                        'primary-dark': '#4F46E5',
+                        'primary-light': '#A5B4FC',
+                        'accent-purple': '#A855F7',
+                        'accent-teal': '#14B8A6',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/components.css">
+    <link rel="stylesheet" href="../css/pages.css">
+
+    <!-- Vue.js 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body class="bg-gray-50">
+    <!-- Header Navigation -->
+    <div id="app-header"></div>
+
+    <div id="app" class="pt-20 pb-0 h-screen flex flex-col">
+        <div class="flex-1 overflow-hidden">
+            <div class="h-full flex">
+
+                <!-- LEFT: Conversations List -->
+                <div class="w-full md:w-96 bg-white border-r border-gray-200 flex flex-col">
+                    <!-- Header -->
+                    <div class="p-4 border-b border-gray-200">
+                        <h1 class="text-xl font-bold text-gray-900">Messages</h1>
+                        <p class="text-sm text-gray-500 mt-1">{{ conversations.length }} conversation{{ conversations.length !== 1 ? 's' : '' }}</p>
+                    </div>
+
+                    <!-- Conversations List -->
+                    <div class="flex-1 overflow-y-auto">
+                        <div
+                            v-for="conv in conversations"
+                            :key="conv.user_id"
+                            @click="selectConversation(conv.user_id)"
+                            :class="[
+                                'p-4 border-b border-gray-100 cursor-pointer transition hover:bg-gray-50',
+                                activeUserId === conv.user_id ? 'bg-primary/5 border-l-4 border-l-primary' : ''
+                            ]"
+                        >
+                            <div class="flex items-start space-x-3">
+                                <!-- Avatar -->
+                                <div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0"
+                                     :style="{ backgroundColor: getAvatarColor(conv.user_id) }">
+                                    {{ getInitials(conv.user_name) }}
+                                </div>
+
+                                <!-- Conversation Info -->
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <h3 class="font-semibold text-gray-900 truncate">{{ conv.user_name }}</h3>
+                                        <span class="text-xs text-gray-500">{{ formatTime(conv.last_message_time) }}</span>
+                                    </div>
+                                    <p class="text-sm text-gray-600 truncate">{{ conv.last_message }}</p>
+                                    <span v-if="conv.unread_count > 0"
+                                          class="inline-block mt-1 bg-primary text-white text-xs px-2 py-0.5 rounded-full">
+                                        {{ conv.unread_count }} new
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Empty State -->
+                        <div v-if="conversations.length === 0" class="p-8 text-center">
+                            <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                            </svg>
+                            <h3 class="text-lg font-medium text-gray-900 mb-2">No messages yet</h3>
+                            <p class="text-gray-600 text-sm">Start a conversation with your friends!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT: Active Conversation -->
+                <div v-if="activeUserId" class="flex-1 flex flex-col bg-white">
+                    <!-- Conversation Header -->
+                    <div class="p-4 border-b border-gray-200 flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold"
+                                 :style="{ backgroundColor: getAvatarColor(activeUserId) }">
+                                {{ getInitials(activeUserName) }}
+                            </div>
+                            <div>
+                                <h2 class="font-semibold text-gray-900">{{ activeUserName }}</h2>
+                                <p class="text-sm text-gray-500">Birthday twin</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Messages Area -->
+                    <div ref="messagesContainer" class="flex-1 overflow-y-auto p-4 space-y-4">
+                        <div v-for="message in messages" :key="message.id">
+                            <!-- Message Bubble -->
+                            <div :class="[
+                                'flex',
+                                message.sender_id === user.id ? 'justify-end' : 'justify-start'
+                            ]">
+                                <div :class="[
+                                    'max-w-xs lg:max-w-md xl:max-w-lg px-4 py-2 rounded-2xl',
+                                    message.sender_id === user.id
+                                        ? 'bg-primary text-white'
+                                        : 'bg-gray-100 text-gray-900'
+                                ]">
+                                    <p class="text-sm whitespace-pre-wrap break-words">{{ message.content }}</p>
+                                    <p :class="[
+                                        'text-xs mt-1',
+                                        message.sender_id === user.id ? 'text-primary-light' : 'text-gray-500'
+                                    ]">
+                                        {{ formatTime(message.created_at) }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Loading -->
+                        <div v-if="loadingMessages" class="text-center py-4">
+                            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                        </div>
+
+                        <!-- Empty State -->
+                        <div v-if="messages.length === 0 && !loadingMessages" class="text-center py-12">
+                            <p class="text-gray-500">No messages yet. Start the conversation!</p>
+                        </div>
+                    </div>
+
+                    <!-- Message Input -->
+                    <div class="p-4 border-t border-gray-200">
+                        <form @submit.prevent="sendMessage" class="flex space-x-2">
+                            <input
+                                v-model="newMessage"
+                                type="text"
+                                placeholder="Type a message..."
+                                class="flex-1 px-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                                :disabled="sending"
+                            >
+                            <button
+                                type="submit"
+                                :disabled="!newMessage.trim() || sending"
+                                class="px-6 py-3 bg-primary hover:bg-primary-dark text-white rounded-full font-medium transition disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                <svg v-if="!sending" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                                </svg>
+                                <div v-else class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- RIGHT: No Conversation Selected -->
+                <div v-else class="flex-1 flex items-center justify-center bg-gray-50">
+                    <div class="text-center">
+                        <svg class="w-24 h-24 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                        </svg>
+                        <h2 class="text-xl font-semibold text-gray-900 mb-2">Select a conversation</h2>
+                        <p class="text-gray-600">Choose a conversation from the list to start messaging</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../js/utils.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/navigation.js"></script>
+
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    user: null,
+                    conversations: [],
+                    messages: [],
+                    activeUserId: null,
+                    activeUserName: '',
+                    newMessage: '',
+                    sending: false,
+                    loadingMessages: false,
+                    refreshInterval: null
+                };
+            },
+            async mounted() {
+                // Check authentication
+                if (!requireAuth()) {
+                    return;
+                }
+
+                // Load user data
+                this.user = getCurrentUser();
+
+                // Check if coming from a specific user (from friends page)
+                const urlParams = new URLSearchParams(window.location.search);
+                const userId = urlParams.get('user');
+
+                // Load conversations
+                await this.loadConversations();
+
+                // If userId provided, select that conversation (even if no previous messages)
+                if (userId) {
+                    // If conversation exists, load it
+                    if (this.conversations.find(c => c.user_id === userId)) {
+                        this.selectConversation(userId);
+                    } else {
+                        // Start new conversation
+                        await this.startNewConversation(userId);
+                    }
+                } else if (this.conversations.length > 0) {
+                    // Select first conversation
+                    this.selectConversation(this.conversations[0].user_id);
+                }
+
+                // Auto-refresh conversations every 5 seconds
+                this.refreshInterval = setInterval(() => {
+                    this.loadConversations();
+                    if (this.activeUserId) {
+                        this.loadMessages(this.activeUserId);
+                    }
+                }, 5000);
+            },
+            beforeUnmount() {
+                if (this.refreshInterval) {
+                    clearInterval(this.refreshInterval);
+                }
+            },
+            methods: {
+                async loadConversations() {
+                    try {
+                        this.conversations = await api.messages.getConversations();
+                    } catch (error) {
+                        console.error('Error loading conversations:', error);
+                    }
+                },
+                async selectConversation(userId) {
+                    this.activeUserId = userId;
+                    const conv = this.conversations.find(c => c.user_id === userId);
+                    this.activeUserName = conv ? conv.user_name : 'User';
+
+                    await this.loadMessages(userId);
+                },
+                async startNewConversation(userId) {
+                    try {
+                        // Get user info
+                        const user = await api.users.getUser(userId);
+                        this.activeUserId = userId;
+                        this.activeUserName = user.full_name;
+                        this.messages = [];
+                    } catch (error) {
+                        console.error('Error starting conversation:', error);
+                        alert('Failed to start conversation. User may not exist.');
+                    }
+                },
+                async loadMessages(userId) {
+                    try {
+                        this.loadingMessages = true;
+                        this.messages = await api.messages.getConversation(userId);
+
+                        // Scroll to bottom
+                        await this.$nextTick();
+                        this.scrollToBottom();
+
+                        // Update unread count in conversations
+                        const conv = this.conversations.find(c => c.user_id === userId);
+                        if (conv) {
+                            conv.unread_count = 0;
+                        }
+                    } catch (error) {
+                        console.error('Error loading messages:', error);
+                    } finally {
+                        this.loadingMessages = false;
+                    }
+                },
+                async sendMessage() {
+                    if (!this.newMessage.trim() || this.sending) return;
+
+                    try {
+                        this.sending = true;
+                        const message = await api.messages.send(this.activeUserId, this.newMessage.trim());
+
+                        // Add message to list
+                        this.messages.push(message);
+                        this.newMessage = '';
+
+                        // Update conversation list
+                        await this.loadConversations();
+
+                        // Scroll to bottom
+                        await this.$nextTick();
+                        this.scrollToBottom();
+                    } catch (error) {
+                        console.error('Error sending message:', error);
+                        if (typeof showToast !== 'undefined') {
+                            showToast('Failed to send message: ' + error.message, 'error');
+                        }
+                    } finally {
+                        this.sending = false;
+                    }
+                },
+                scrollToBottom() {
+                    const container = this.$refs.messagesContainer;
+                    if (container) {
+                        container.scrollTop = container.scrollHeight;
+                    }
+                },
+                // Utility functions
+                getInitials(name) {
+                    if (!name) return '??';
+                    const parts = name.trim().split(' ');
+                    if (parts.length === 1) {
+                        return parts[0].substring(0, 2).toUpperCase();
+                    }
+                    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+                },
+                getAvatarColor(userId) {
+                    const colors = [
+                        '#6366F1', '#A855F7', '#14B8A6', '#F59E0B',
+                        '#EF4444', '#10B981', '#3B82F6', '#8B5CF6'
+                    ];
+                    const hash = userId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+                    return colors[hash % colors.length];
+                },
+                formatTime(dateString) {
+                    const date = new Date(dateString);
+                    const now = new Date();
+                    const diff = now - date;
+
+                    // Less than 1 minute
+                    if (diff < 60000) return 'Just now';
+
+                    // Less than 1 hour
+                    if (diff < 3600000) {
+                        const minutes = Math.floor(diff / 60000);
+                        return `${minutes}m ago`;
+                    }
+
+                    // Less than 24 hours
+                    if (diff < 86400000) {
+                        const hours = Math.floor(diff / 3600000);
+                        return `${hours}h ago`;
+                    }
+
+                    // Less than 7 days
+                    if (diff < 604800000) {
+                        const days = Math.floor(diff / 86400000);
+                        return `${days}d ago`;
+                    }
+
+                    // Format as date
+                    return date.toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric'
+                    });
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

@@ -28,9 +28,7 @@ function renderHeader() {
                 <div class="hidden md:flex items-center space-x-8">
                     ${isLoggedIn ? `
                         <a href="dashboard.html" class="text-gray-700 hover:text-primary transition">Dashboard</a>
-                        <a href="explore.html" class="text-gray-700 hover:text-primary transition">Explore</a>
-                        <a href="messages.html" class="text-gray-700 hover:text-primary transition">Messages</a>
-                        <a href="groups.html" class="text-gray-700 hover:text-primary transition">Groups</a>
+                        <a href="friends.html" class="text-gray-700 hover:text-primary transition">Friends</a>
                     ` : `
                         <a href="index.html#home" class="text-gray-700 hover:text-primary transition">Home</a>
                         <a href="index.html#about" class="text-gray-700 hover:text-primary transition">About</a>
@@ -84,9 +82,7 @@ function renderHeader() {
             <div id="mobileMenu" class="hidden md:hidden mt-4 pb-4">
                 ${isLoggedIn ? `
                     <a href="dashboard.html" class="block py-2 text-gray-700 hover:text-primary transition">Dashboard</a>
-                    <a href="explore.html" class="block py-2 text-gray-700 hover:text-primary transition">Explore</a>
-                    <a href="messages.html" class="block py-2 text-gray-700 hover:text-primary transition">Messages</a>
-                    <a href="groups.html" class="block py-2 text-gray-700 hover:text-primary transition">Groups</a>
+                    <a href="friends.html" class="block py-2 text-gray-700 hover:text-primary transition">Friends</a>
                     <hr class="my-2">
                     <a href="profile.html" class="block py-2 text-gray-700 hover:text-primary transition">My Profile</a>
                     <a href="settings.html" class="block py-2 text-gray-700 hover:text-primary transition">Settings</a>

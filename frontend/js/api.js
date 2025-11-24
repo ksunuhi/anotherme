@@ -30,7 +30,14 @@ async function apiRequest(endpoint, options = {}) {
             throw new Error(error.detail || 'API request failed');
         }
 
-        return await response.json();
+        // Handle 204 No Content responses
+        if (response.status === 204) {
+            return null;
+        }
+
+        // Handle empty responses
+        const text = await response.text();
+        return text ? JSON.parse(text) : null;
     } catch (error) {
         console.error('API Error:', error);
         throw error;
@@ -61,29 +68,28 @@ const api = {
     // Users
     users: {
         getMe: () => apiRequest('/users/me'),
-        updateProfile: (data) => apiRequest('/users/me', {
-            method: 'PUT',
-            body: JSON.stringify(data),
-        }),
+        getStats: () => apiRequest('/users/me/stats'),
+        getBirthdayTwins: () => apiRequest('/users/birthday-twins'),
         getUser: (userId) => apiRequest(`/users/${userId}`),
-        search: (params) => apiRequest(`/users/search?${new URLSearchParams(params)}`),
-        getBirthdayMatches: () => apiRequest('/users/birthday-matches'),
+        searchByBirthday: (year, month, day) => apiRequest(`/users/search/by-birthday?year=${year}&month=${month}&day=${day}`),
     },
 
     // Posts
     posts: {
-        getFeed: (filter = 'all') => apiRequest(`/posts/feed?filter=${filter}`),
-        create: (data) => apiRequest('/posts', {
+        getFeed: (filter = 'friends') => apiRequest(`/posts/feed?filter_type=${filter}`),
+        create: (content, visibility = 'public') => apiRequest('/posts', {
             method: 'POST',
-            body: JSON.stringify(data),
+            body: JSON.stringify({ content, visibility }),
+        }),
+        update: (postId, content) => apiRequest(`/posts/${postId}`, {
+            method: 'PUT',
+            body: JSON.stringify({ content }),
+        }),
+        delete: (postId) => apiRequest(`/posts/${postId}`, {
+            method: 'DELETE',
         }),
         like: (postId) => apiRequest(`/posts/${postId}/like`, {
             method: 'POST',
-        }),
-        getComments: (postId) => apiRequest(`/posts/${postId}/comments`),
-        addComment: (postId, content) => apiRequest(`/posts/${postId}/comments`, {
-            method: 'POST',
-            body: JSON.stringify({ content }),
         }),
     },
 
@@ -95,12 +101,16 @@ const api = {
             method: 'POST',
             body: JSON.stringify({ recipient_id: recipientId, content }),
         }),
+        getUnreadCount: () => apiRequest('/messages/unread-count'),
+        markAsRead: (messageId) => apiRequest(`/messages/${messageId}/read`, {
+            method: 'PUT',
+        }),
     },
 
     // Friends
     friends: {
         getAll: () => apiRequest('/friends'),
-        getMutual: () => apiRequest('/friends/mutual'),
+        getMutual: (userId) => apiRequest(`/friends/mutual/${userId}`),
         add: (userId) => apiRequest(`/friends/${userId}`, {
             method: 'POST',
         }),

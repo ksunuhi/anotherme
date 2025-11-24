@@ -15,6 +15,7 @@ class UserRegister(BaseModel):
     gender: str = Field(..., pattern="^(Male|Female|Other|Prefer not to say)$")
     city: str = Field(..., min_length=1, max_length=100)
     region: str = Field(..., min_length=1, max_length=100)
+    country: str = Field(..., min_length=1, max_length=100)
     bio: Optional[str] = Field(None, max_length=500)
     profile_picture_url: Optional[str] = None
 

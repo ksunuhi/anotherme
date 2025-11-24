@@ -15,6 +15,7 @@ class UserBase(BaseModel):
     gender: str
     city: str
     region: str
+    country: str
     bio: Optional[str] = None
     profile_picture_url: Optional[str] = None
 
@@ -30,6 +31,7 @@ class UserUpdate(BaseModel):
     display_name: Optional[str] = None
     city: Optional[str] = None
     region: Optional[str] = None
+    country: Optional[str] = None
     bio: Optional[str] = Field(None, max_length=500)
     profile_picture_url: Optional[str] = None
     is_discoverable: Optional[bool] = None

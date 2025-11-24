@@ -38,83 +38,27 @@
     <div id="app" class="pt-20 pb-12">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
 
-            <!-- Welcome Section -->
-            <div class="mb-8 bg-gradient-to-r from-primary to-accent-purple rounded-xl p-8 text-white">
-                <h1 class="text-3xl md:text-4xl font-bold mb-2">
+            <!-- Welcome Banner -->
+            <div class="mb-6 bg-gradient-to-r from-primary to-accent-purple rounded-xl p-6 text-white">
+                <h1 class="text-2xl md:text-3xl font-bold mb-2">
                     Welcome back, {{ user ? user.full_name.split(' ')[0] : 'Friend' }}! 🎉
                 </h1>
-                <p class="text-lg opacity-90">
-                    {{ getBirthdayMessage() }}
+                <p class="text-sm md:text-base opacity-90">
+                    {{ getBirthdayMessage() }} · 🎂 {{ stats.birthdayTwins }} birthday twins found
                 </p>
             </div>
 
-            <!-- Quick Stats -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-                <div class="bg-white rounded-lg shadow p-6">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-gray-600 text-sm font-medium">Birthday Twins</p>
-                            <p class="text-3xl font-bold text-primary">{{ stats.birthdayTwins }}</p>
-                        </div>
-                        <div class="w-12 h-12 bg-primary-light rounded-full flex items-center justify-center">
-                            <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
+            <!-- 2-Column Layout -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-                <div class="bg-white rounded-lg shadow p-6">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-gray-600 text-sm font-medium">Friends</p>
-                            <p class="text-3xl font-bold text-accent-teal">{{ stats.friends }}</p>
-                        </div>
-                        <div class="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center">
-                            <svg class="w-6 h-6 text-accent-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-lg shadow p-6">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-gray-600 text-sm font-medium">Posts</p>
-                            <p class="text-3xl font-bold text-accent-purple">{{ stats.posts }}</p>
-                        </div>
-                        <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                            <svg class="w-6 h-6 text-accent-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-lg shadow p-6">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-gray-600 text-sm font-medium">Messages</p>
-                            <p class="text-3xl font-bold text-blue-600">{{ stats.messages }}</p>
-                        </div>
-                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Main Content -->
+                <!-- LEFT COLUMN - Main Content (2/3 width) -->
                 <div class="lg:col-span-2 space-y-6">
 
-                    <!-- Create Post -->
-                    <div class="bg-white rounded-lg shadow p-6">
+                    <!-- Create Post Card -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                        <h3 class="font-bold text-gray-900 mb-4">Create New Post</h3>
                         <div class="flex items-start space-x-4">
-                            <div class="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white font-semibold text-lg">
+                            <div class="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white font-semibold text-lg flex-shrink-0">
                                 {{ user ? getInitials(user.full_name) : 'U' }}
                             </div>
                             <div class="flex-1">
@@ -126,14 +70,20 @@
                                 ></textarea>
                                 <div class="flex items-center justify-between mt-3">
                                     <div class="flex space-x-2">
-                                        <button class="p-2 text-gray-500 hover:bg-gray-100 rounded-lg transition">
-                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <button class="p-2 text-gray-500 hover:bg-gray-100 rounded-lg transition" title="Add Photo">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                             </svg>
                                         </button>
-                                        <button class="p-2 text-gray-500 hover:bg-gray-100 rounded-lg transition">
-                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <button class="p-2 text-gray-500 hover:bg-gray-100 rounded-lg transition" title="Add Emoji">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                        </button>
+                                        <button class="p-2 text-gray-500 hover:bg-gray-100 rounded-lg transition" title="Add Location">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                             </svg>
                                         </button>
                                     </div>
@@ -149,44 +99,128 @@
                         </div>
                     </div>
 
+                    <!-- Filter Tabs -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                        <div class="flex border-b border-gray-200">
+                            <button
+                                @click="filterPosts('my')"
+                                :class="[
+                                    'flex-1 px-6 py-3 text-sm font-medium transition',
+                                    activeFilter === 'my'
+                                        ? 'text-primary border-b-2 border-primary bg-primary/5'
+                                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                                ]"
+                            >
+                                My Posts
+                            </button>
+                            <button
+                                @click="filterPosts('friends')"
+                                :class="[
+                                    'flex-1 px-6 py-3 text-sm font-medium transition',
+                                    activeFilter === 'friends'
+                                        ? 'text-primary border-b-2 border-primary bg-primary/5'
+                                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                                ]"
+                            >
+                                Friends Post
+                            </button>
+                            <button
+                                @click="filterPosts('twins')"
+                                :class="[
+                                    'flex-1 px-6 py-3 text-sm font-medium transition',
+                                    activeFilter === 'twins'
+                                        ? 'text-primary border-b-2 border-primary bg-primary/5'
+                                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                                ]"
+                            >
+                                Birthday Twins
+                            </button>
+                        </div>
+                    </div>
+
                     <!-- Posts Feed -->
                     <div class="space-y-4">
-                        <h2 class="text-xl font-bold text-gray-900">Recent Posts</h2>
-
                         <!-- Post Card -->
-                        <div v-for="post in posts" :key="post.id" class="bg-white rounded-lg shadow p-6">
+                        <div v-for="post in filteredPosts" :key="post.id" class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
                             <div class="flex items-start space-x-4">
-                                <div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-semibold text-lg"
+                                <div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0"
                                      :style="{ backgroundColor: getAvatarColor(post.author.id) }">
                                     {{ getInitials(post.author.name) }}
                                 </div>
-                                <div class="flex-1">
-                                    <div class="flex items-center justify-between">
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between mb-2">
                                         <div>
                                             <h3 class="font-semibold text-gray-900">{{ post.author.name }}</h3>
                                             <p class="text-sm text-gray-500">{{ formatDate(post.created_at) }}</p>
                                         </div>
-                                        <button class="text-gray-400 hover:text-gray-600">
-                                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                                <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
-                                            </svg>
-                                        </button>
+                                        <!-- Edit/Delete buttons for own posts -->
+                                        <div v-if="isMyPost(post)" class="flex space-x-2">
+                                            <button
+                                                @click="editPost(post)"
+                                                class="text-primary hover:text-primary-dark transition"
+                                                title="Edit"
+                                            >
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                                </svg>
+                                            </button>
+                                            <button
+                                                @click="deletePost(post.id)"
+                                                class="text-red-500 hover:text-red-700 transition"
+                                                title="Delete"
+                                            >
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                                </svg>
+                                            </button>
+                                        </div>
                                     </div>
-                                    <p class="mt-3 text-gray-800">{{ post.content }}</p>
+
+                                    <!-- Edit mode -->
+                                    <div v-if="editingPostId === post.id" class="mb-4">
+                                        <textarea
+                                            v-model="editingPostContent"
+                                            rows="3"
+                                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
+                                        ></textarea>
+                                        <div class="flex space-x-2 mt-2">
+                                            <button
+                                                @click="savePost(post.id)"
+                                                class="px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg text-sm font-medium transition"
+                                            >
+                                                Save
+                                            </button>
+                                            <button
+                                                @click="cancelEdit"
+                                                class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg text-sm font-medium transition"
+                                            >
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Display mode -->
+                                    <p v-else class="text-gray-800 mb-4">{{ post.content }}</p>
+
+                                    <!-- Engagement Stats -->
+                                    <div class="flex items-center space-x-4 text-sm text-gray-500 mb-3 pb-3 border-b border-gray-100">
+                                        <span>❤️ {{ post.likes }} {{ post.likes === 1 ? 'like' : 'likes' }}</span>
+                                        <span>💬 {{ post.comments }} {{ post.comments === 1 ? 'comment' : 'comments' }}</span>
+                                    </div>
 
                                     <!-- Post Actions -->
-                                    <div class="flex items-center space-x-6 mt-4 pt-4 border-t border-gray-100">
-                                        <button class="flex items-center space-x-2 text-gray-600 hover:text-primary transition">
+                                    <div class="flex items-center space-x-6">
+                                        <button @click="likePost(post.id)" class="flex items-center space-x-2 text-gray-600 hover:text-red-500 transition">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
                                             </svg>
-                                            <span class="text-sm font-medium">{{ post.likes }} Like{{ post.likes !== 1 ? 's' : '' }}</span>
+                                            <span class="text-sm font-medium">Like</span>
                                         </button>
                                         <button class="flex items-center space-x-2 text-gray-600 hover:text-primary transition">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
                                             </svg>
-                                            <span class="text-sm font-medium">{{ post.comments }} Comment{{ post.comments !== 1 ? 's' : '' }}</span>
+                                            <span class="text-sm font-medium">Comment</span>
                                         </button>
                                         <button class="flex items-center space-x-2 text-gray-600 hover:text-primary transition">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -200,91 +234,114 @@
                         </div>
 
                         <!-- Empty State -->
-                        <div v-if="posts.length === 0" class="bg-white rounded-lg shadow p-12 text-center">
+                        <div v-if="filteredPosts.length === 0" class="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center">
                             <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
                             </svg>
                             <h3 class="text-lg font-medium text-gray-900 mb-2">No posts yet</h3>
                             <p class="text-gray-600">Be the first to share something!</p>
                         </div>
+
+                        <!-- Load More -->
+                        <div v-if="filteredPosts.length > 0" class="text-center">
+                            <button class="px-6 py-2 text-primary hover:text-primary-dark font-medium transition">
+                                Load More Posts
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Sidebar -->
+                <!-- RIGHT SIDEBAR - Widgets (1/3 width) -->
                 <div class="space-y-6">
 
-                    <!-- Profile Card -->
-                    <div class="bg-white rounded-lg shadow p-6">
-                        <div class="text-center">
-                            <div class="w-24 h-24 rounded-full bg-primary mx-auto flex items-center justify-center text-white font-bold text-3xl mb-4">
-                                {{ user ? getInitials(user.full_name) : 'U' }}
-                            </div>
-                            <h3 class="text-xl font-bold text-gray-900 mb-1">{{ user ? user.full_name : 'User' }}</h3>
-                            <p class="text-gray-600 mb-2">{{ user ? user.city + ', ' + user.region : 'Location' }}</p>
-                            <p class="text-sm text-primary font-medium mb-4">
-                                🎂 Birthday: {{ user ? formatBirthday(user.birth_date) : '' }}
+                    <!-- Birthday Search Widget -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                        <h3 class="font-bold text-gray-900 mb-4">🎂 Find Your Birthday Twins</h3>
+
+                        <div class="space-y-4">
+                            <p class="text-sm text-gray-600 mb-4">
+                                Discover people born on the exact same day as you!
                             </p>
-                            <a href="profile.html" class="block w-full px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg font-medium transition text-center">
-                                View Profile
-                            </a>
-                        </div>
-                    </div>
 
-                    <!-- Birthday Twins -->
-                    <div class="bg-white rounded-lg shadow p-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="font-bold text-gray-900">Birthday Twins</h3>
-                            <a href="explore.html" class="text-sm text-primary hover:text-primary-dark font-medium">
-                                See All
-                            </a>
-                        </div>
-                        <div class="space-y-3">
-                            <div v-for="twin in birthdayTwins" :key="twin.id" class="flex items-center space-x-3">
-                                <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold"
-                                     :style="{ backgroundColor: getAvatarColor(twin.id) }">
-                                    {{ getInitials(twin.name) }}
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <p class="text-sm font-medium text-gray-900 truncate">{{ twin.name }}</p>
-                                    <p class="text-xs text-gray-500">{{ twin.location }}</p>
-                                </div>
-                                <button class="px-3 py-1 bg-primary-light text-primary text-xs font-medium rounded hover:bg-primary hover:text-white transition">
-                                    Add
-                                </button>
+                            <button
+                                @click="findMyBirthdayTwins"
+                                class="w-full px-4 py-3 bg-gradient-to-r from-primary to-accent-purple hover:from-primary-dark hover:to-purple-600 text-white rounded-lg font-medium transition shadow-md"
+                            >
+                                ✨ Find My Birthday Twins
+                            </button>
+
+                            <div v-if="user" class="text-center">
+                                <p class="text-xs text-gray-500">
+                                    Your birthday: {{ formatBirthday(user.birth_date) }}
+                                </p>
                             </div>
                         </div>
-
-                        <!-- Empty State -->
-                        <div v-if="birthdayTwins.length === 0" class="text-center py-8">
-                            <p class="text-gray-500 text-sm">No birthday twins yet</p>
-                            <a href="explore.html" class="text-primary text-sm font-medium hover:underline">
-                                Explore now
-                            </a>
-                        </div>
                     </div>
 
-                    <!-- Suggested Friends -->
-                    <div class="bg-white rounded-lg shadow p-6">
+                    <!-- My Friends List -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
                         <div class="flex items-center justify-between mb-4">
-                            <h3 class="font-bold text-gray-900">Suggested Friends</h3>
-                            <a href="explore.html" class="text-sm text-primary hover:text-primary-dark font-medium">
-                                See All
+                            <h3 class="font-bold text-gray-900">👥 My Friends ({{ stats.friends }})</h3>
+                            <a href="friends.html" class="text-sm text-primary hover:text-primary-dark font-medium">
+                                View All
                             </a>
                         </div>
                         <div class="space-y-3">
-                            <div v-for="friend in suggestedFriends" :key="friend.id" class="flex items-center space-x-3">
-                                <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold"
+                            <div v-for="friend in myFriends.slice(0, 3)" :key="friend.id"
+                                 class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                                <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0"
                                      :style="{ backgroundColor: getAvatarColor(friend.id) }">
                                     {{ getInitials(friend.name) }}
                                 </div>
                                 <div class="flex-1 min-w-0">
                                     <p class="text-sm font-medium text-gray-900 truncate">{{ friend.name }}</p>
-                                    <p class="text-xs text-gray-500">{{ friend.mutualFriends }} mutual friends</p>
+                                    <p class="text-xs text-gray-500">🎂 {{ friend.birthday }}</p>
                                 </div>
-                                <button class="px-3 py-1 bg-primary-light text-primary text-xs font-medium rounded hover:bg-primary hover:text-white transition">
-                                    Add
+                                <button
+                                    @click="sendMessage(friend.id)"
+                                    class="px-3 py-1 bg-primary text-white text-xs font-medium rounded-lg hover:bg-primary-dark transition"
+                                >
+                                    Message
                                 </button>
                             </div>
+                        </div>
+                        <div v-if="myFriends.length === 0" class="text-center py-6">
+                            <p class="text-sm text-gray-500">No friends yet</p>
+                            <button class="text-sm text-primary hover:underline mt-2">Find friends</button>
+                        </div>
+                    </div>
+
+                    <!-- Messages Widget -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-bold text-gray-900">💬 Messages ({{ stats.messages }})</h3>
+                            <a href="messages.html" class="text-sm text-primary hover:text-primary-dark font-medium">
+                                View All
+                            </a>
+                        </div>
+                        <div class="space-y-2">
+                            <div v-for="message in recentMessages.slice(0, 3)" :key="message.id"
+                                 class="p-3 hover:bg-gray-50 rounded-lg cursor-pointer border border-gray-200 transition">
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm flex-shrink-0"
+                                         :style="{ backgroundColor: getAvatarColor(message.from.id) }">
+                                        {{ getInitials(message.from.name) }}
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-center justify-between mb-1">
+                                            <p class="text-sm font-medium text-gray-900">{{ message.from.name }}</p>
+                                            <span v-if="message.unread" class="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+                                                Unread
+                                            </span>
+                                        </div>
+                                        <p class="text-sm text-gray-600 truncate">{{ message.preview }}</p>
+                                        <p class="text-xs text-gray-400 mt-1">{{ formatDate(message.timestamp) }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-if="recentMessages.length === 0" class="text-center py-6">
+                            <p class="text-sm text-gray-500">No messages yet</p>
                         </div>
                     </div>
                 </div>
@@ -309,58 +366,31 @@
                 return {
                     user: null,
                     newPost: '',
+                    activeFilter: 'my',
+                    editingPostId: null,
+                    editingPostContent: '',
                     stats: {
                         birthdayTwins: 0,
                         friends: 0,
                         posts: 0,
                         messages: 0
                     },
-                    posts: [
-                        {
-                            id: '1',
-                            author: {
-                                id: 'demo1',
-                                name: 'Sarah Johnson',
-                            },
-                            content: 'Just found out there are 12 other people in this community born on the exact same day as me! This is amazing! 🎉',
-                            created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-                            likes: 24,
-                            comments: 5
-                        },
-                        {
-                            id: '2',
-                            author: {
-                                id: 'demo2',
-                                name: 'Mike Chen',
-                            },
-                            content: 'Happy to connect with all my birthday twins! Anyone else celebrating their birthday next week? 🎂',
-                            created_at: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
-                            likes: 18,
-                            comments: 8
-                        },
-                        {
-                            id: '3',
-                            author: {
-                                id: 'demo3',
-                                name: 'Emma Wilson',
-                            },
-                            content: 'I love this community! It\'s so interesting to see how people born on the same day share similar experiences.',
-                            created_at: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
-                            likes: 42,
-                            comments: 12
-                        }
-                    ],
-                    birthdayTwins: [
-                        { id: 'twin1', name: 'Alex Martinez', location: 'New York, NY' },
-                        { id: 'twin2', name: 'Jessica Lee', location: 'Los Angeles, CA' },
-                        { id: 'twin3', name: 'David Park', location: 'Chicago, IL' }
-                    ],
-                    suggestedFriends: [
-                        { id: 'friend1', name: 'Ryan Thompson', mutualFriends: 3 },
-                        { id: 'friend2', name: 'Lisa Anderson', mutualFriends: 5 },
-                        { id: 'friend3', name: 'James Miller', mutualFriends: 2 }
-                    ]
+                    posts: [],
+                    myFriends: [],
+                    recentMessages: []
                 };
+            },
+            computed: {
+                filteredPosts() {
+                    if (this.activeFilter === 'my') {
+                        return this.posts.filter(p => this.isMyPost(p));
+                    } else if (this.activeFilter === 'friends') {
+                        return this.posts.filter(p => p.type === 'friend');
+                    } else if (this.activeFilter === 'twins') {
+                        return this.posts.filter(p => p.type === 'twin');
+                    }
+                    return this.posts;
+                }
             },
             async mounted() {
                 // Check authentication
@@ -377,16 +407,59 @@
             methods: {
                 async loadDashboardData() {
                     try {
-                        // TODO: Replace with actual API calls when backend is ready
-                        // For now, we'll use mock data
-                        this.stats = {
-                            birthdayTwins: this.birthdayTwins.length,
-                            friends: 15,
-                            posts: 8,
-                            messages: 3
-                        };
+                        // Load stats
+                        const stats = await api.users.getStats();
+                        this.stats = stats;
+
+                        // Load posts (friends by default)
+                        await this.loadPosts();
+
+                        // Load friends
+                        await this.loadFriends();
+
+                        // TODO: Load messages when messages API is ready
+                        // const messages = await api.messages.getConversations();
+                        // this.recentMessages = messages.slice(0, 3);
                     } catch (error) {
                         console.error('Error loading dashboard data:', error);
+                        if (error.message.includes('401')) {
+                            // Token expired, redirect to login
+                            localStorage.removeItem('token');
+                            localStorage.removeItem('user');
+                            window.location.href = '/pages/login.html';
+                        }
+                    }
+                },
+                async loadPosts() {
+                    try {
+                        const posts = await api.posts.getFeed(this.activeFilter);
+                        this.posts = posts.map(post => ({
+                            id: post.id,
+                            author: {
+                                id: post.author_id,
+                                name: post.author?.full_name || 'Unknown User'
+                            },
+                            content: post.content,
+                            created_at: post.created_at,
+                            likes: post.like_count,
+                            comments: post.comment_count,
+                            type: this.activeFilter === 'my' ? 'my' : (this.activeFilter === 'twins' ? 'twin' : 'friend'),
+                            is_liked: post.is_liked
+                        }));
+                    } catch (error) {
+                        console.error('Error loading posts:', error);
+                    }
+                },
+                async loadFriends() {
+                    try {
+                        const friends = await api.friends.getAll();
+                        this.myFriends = friends.slice(0, 10).map(friend => ({
+                            id: friend.id,
+                            name: friend.full_name,
+                            birthday: this.formatBirthday(friend.birth_date)
+                        }));
+                    } catch (error) {
+                        console.error('Error loading friends:', error);
                     }
                 },
                 getBirthdayMessage() {
@@ -398,37 +471,196 @@
                                       birthday.getDate() === today.getDate();
 
                     if (isBirthday) {
-                        return '🎂 Happy Birthday! Make it special with your birthday twins!';
+                        return '🎂 Happy Birthday! Make it special with your birthday twins';
                     }
 
-                    return 'Ready to connect with your birthday twins?';
+                    // Calculate days until birthday
+                    const nextBirthday = new Date(today.getFullYear(), birthday.getMonth(), birthday.getDate());
+                    if (nextBirthday < today) {
+                        nextBirthday.setFullYear(today.getFullYear() + 1);
+                    }
+                    const daysUntil = Math.ceil((nextBirthday - today) / (1000 * 60 * 60 * 24));
+
+                    return `📅 Your birthday is in ${daysUntil} days`;
+                },
+                async filterPosts(filter) {
+                    this.activeFilter = filter;
+                    await this.loadPosts();
                 },
                 async createPost() {
                     if (!this.newPost.trim()) return;
 
                     try {
-                        // TODO: Replace with actual API call when backend is ready
-                        const newPostObj = {
-                            id: Date.now().toString(),
+                        const createdPost = await api.posts.create(this.newPost.trim());
+
+                        // Add to feed
+                        this.posts.unshift({
+                            id: createdPost.id,
                             author: {
                                 id: this.user.id,
                                 name: this.user.full_name
                             },
-                            content: this.newPost,
-                            created_at: new Date().toISOString(),
+                            content: createdPost.content,
+                            created_at: createdPost.created_at,
                             likes: 0,
-                            comments: 0
-                        };
+                            comments: 0,
+                            type: 'my',
+                            is_liked: false
+                        });
 
-                        this.posts.unshift(newPostObj);
                         this.newPost = '';
                         this.stats.posts++;
 
-                        showToast('Post created successfully!', 'success');
+                        if (typeof showToast !== 'undefined') {
+                            showToast('Post created successfully!', 'success');
+                        }
                     } catch (error) {
                         console.error('Error creating post:', error);
-                        showToast('Failed to create post', 'error');
+                        if (typeof showToast !== 'undefined') {
+                            showToast('Failed to create post: ' + error.message, 'error');
+                        }
                     }
+                },
+                async likePost(postId) {
+                    try {
+                        const result = await api.posts.like(postId);
+                        const post = this.posts.find(p => p.id === postId);
+                        if (post) {
+                            post.likes = result.like_count;
+                            post.is_liked = result.liked;
+                        }
+                    } catch (error) {
+                        console.error('Error liking post:', error);
+                    }
+                },
+                isMyPost(post) {
+                    return this.user && post.author.id === this.user.id;
+                },
+                editPost(post) {
+                    this.editingPostId = post.id;
+                    this.editingPostContent = post.content;
+                },
+                async savePost(postId) {
+                    if (!this.editingPostContent.trim()) return;
+
+                    try {
+                        await api.posts.update(postId, this.editingPostContent.trim());
+
+                        const post = this.posts.find(p => p.id === postId);
+                        if (post) {
+                            post.content = this.editingPostContent.trim();
+                        }
+
+                        this.editingPostId = null;
+                        this.editingPostContent = '';
+
+                        if (typeof showToast !== 'undefined') {
+                            showToast('Post updated successfully!', 'success');
+                        }
+                    } catch (error) {
+                        console.error('Error updating post:', error);
+                        if (typeof showToast !== 'undefined') {
+                            showToast('Failed to update post: ' + error.message, 'error');
+                        }
+                    }
+                },
+                cancelEdit() {
+                    this.editingPostId = null;
+                    this.editingPostContent = '';
+                },
+                async deletePost(postId) {
+                    if (!confirm('Are you sure you want to delete this post?')) return;
+
+                    try {
+                        await api.posts.delete(postId);
+
+                        const index = this.posts.findIndex(p => p.id === postId);
+                        if (index !== -1) {
+                            this.posts.splice(index, 1);
+                            this.stats.posts--;
+                        }
+
+                        if (typeof showToast !== 'undefined') {
+                            showToast('Post deleted successfully!', 'success');
+                        }
+                    } catch (error) {
+                        console.error('Error deleting post:', error);
+                        if (typeof showToast !== 'undefined') {
+                            showToast('Failed to delete post: ' + error.message, 'error');
+                        }
+                    }
+                },
+                async findMyBirthdayTwins() {
+                    if (!this.user) return;
+
+                    try {
+                        const twins = await api.users.getBirthdayTwins();
+                        // TODO: Navigate to birthday twins page or show results
+                        alert(`Found ${twins.length} birthday twins!\n\nThis will navigate to search results page (coming soon).`);
+                        console.log('Birthday twins:', twins);
+                    } catch (error) {
+                        console.error('Error finding birthday twins:', error);
+                        alert('Failed to find birthday twins: ' + error.message);
+                    }
+                },
+                sendMessage(friendId) {
+                    // TODO: Navigate to message page
+                    console.log('Sending message to:', friendId);
+                    window.location.href = `messages.html?user=${friendId}`;
+                },
+                // Utility functions
+                getInitials(name) {
+                    if (!name) return '??';
+                    const parts = name.trim().split(' ');
+                    if (parts.length === 1) {
+                        return parts[0].substring(0, 2).toUpperCase();
+                    }
+                    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+                },
+                getAvatarColor(userId) {
+                    const colors = [
+                        '#6366F1', // primary
+                        '#A855F7', // purple
+                        '#14B8A6', // teal
+                        '#F59E0B', // amber
+                        '#EF4444', // red
+                        '#10B981', // green
+                        '#3B82F6', // blue
+                    ];
+                    const hash = userId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+                    return colors[hash % colors.length];
+                },
+                formatDate(dateString) {
+                    const date = new Date(dateString);
+                    const now = new Date();
+                    const diff = now - date;
+
+                    if (diff < 60000) return 'Just now';
+                    if (diff < 3600000) {
+                        const minutes = Math.floor(diff / 60000);
+                        return `${minutes}m ago`;
+                    }
+                    if (diff < 86400000) {
+                        const hours = Math.floor(diff / 3600000);
+                        return `${hours}h ago`;
+                    }
+                    if (diff < 604800000) {
+                        const days = Math.floor(diff / 86400000);
+                        return `${days}d ago`;
+                    }
+                    return date.toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: date.getFullYear() !== now.getFullYear() ? 'numeric' : undefined
+                    });
+                },
+                formatBirthday(dateString) {
+                    const date = new Date(dateString);
+                    return date.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
                 }
             }
         }).mount('#app');

@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS users (
     gender TEXT NOT NULL CHECK(gender IN ('Male', 'Female', 'Other', 'Prefer not to say')),
     city TEXT NOT NULL,
     region TEXT NOT NULL,
+    country TEXT NOT NULL DEFAULT 'USA',
     profile_picture_url TEXT,
     bio TEXT CHECK(length(bio) <= 500),
     is_discoverable BOOLEAN DEFAULT 1,

@@ -19,6 +19,7 @@ class User(Base):
     gender = Column(String, nullable=False)  # Male, Female, Other, Prefer not to say
     city = Column(String, nullable=False, index=True)
     region = Column(String, nullable=False)
+    country = Column(String, nullable=False, default='USA')
     profile_picture_url = Column(String)
     bio = Column(Text)
     is_discoverable = Column(Boolean, default=True, index=True)

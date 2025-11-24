@@ -95,6 +95,7 @@ async def register(user_data: UserRegister, db: Session = Depends(get_db)):
         gender=user_data.gender,
         city=user_data.city,
         region=user_data.region,
+        country=user_data.country,
         bio=user_data.bio,
         profile_picture_url=user_data.profile_picture_url,
     )
