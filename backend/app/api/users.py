@@ -12,7 +12,7 @@ from app.models.user import User
 from app.models.post import Post
 from app.models.friendship import Friendship
 from app.models.message import Message
-from app.schemas.user import UserResponse
+from app.schemas.user import UserResponse, UserUpdate
 
 router = APIRouter()
 
@@ -25,6 +25,43 @@ async def get_my_profile(
     """
     Get current user's profile
     """
+    return current_user
+
+
+@router.put("/me", response_model=UserResponse)
+async def update_my_profile(
+    user_update: UserUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Update current user's profile
+    """
+    # Update only provided fields
+    if user_update.full_name is not None:
+        current_user.full_name = user_update.full_name
+        # Also update display_name if not separately set
+        if not current_user.display_name or current_user.display_name == current_user.full_name:
+            current_user.display_name = user_update.full_name
+
+    if user_update.bio is not None:
+        current_user.bio = user_update.bio
+
+    if user_update.city is not None:
+        current_user.city = user_update.city
+
+    if user_update.region is not None:
+        current_user.region = user_update.region
+
+    if user_update.country is not None:
+        current_user.country = user_update.country
+
+    if user_update.profile_picture_url is not None:
+        current_user.profile_picture_url = user_update.profile_picture_url
+
+    db.commit()
+    db.refresh(current_user)
+
     return current_user
 
 

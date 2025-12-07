@@ -23,6 +23,18 @@ class Settings(BaseSettings):
     # CORS - comma-separated string that gets split into list
     ALLOWED_ORIGINS: str = "http://localhost:3000,http://localhost:8000,http://localhost:8080,http://127.0.0.1:8000,http://127.0.0.1:8080"
 
+    # Email Configuration
+    ADMIN_EMAIL: str = "admin@example.com"
+    SMTP_HOST: str = "smtp.gmail.com"
+    SMTP_PORT: int = 587
+    SMTP_USER: str = ""
+    SMTP_PASSWORD: str = ""
+    SMTP_FROM_NAME: str = "AnotherMe"
+    SMTP_FROM_EMAIL: str = "noreply@anotherme.com"
+
+    # Frontend URL
+    FRONTEND_URL: str = "http://localhost:8080"
+
     class Config:
         env_file = ".env"
         case_sensitive = True

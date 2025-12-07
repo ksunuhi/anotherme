@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Profile - AnotherMe</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#6366F1",
+              "primary-dark": "#4F46E5",
+              "primary-light": "#A5B4FC",
+              "accent-purple": "#A855F7",
+              "accent-teal": "#14B8A6",
+            },
+          },
+        },
+      };
+    </script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/main.css" />
+    <link rel="stylesheet" href="../css/components.css" />
+    <link rel="stylesheet" href="../css/pages.css" />
+
+    <!-- Vue.js 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  </head>
+  <body class="bg-gray-50">
+    <!-- Header Navigation -->
+    <div id="app-header"></div>
+
+    <div id="app" class="pt-20 pb-12">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
+        <!-- Profile Header Card -->
+        <div
+          class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-6"
+        >
+          <!-- Cover Image (Gradient) -->
+          <div
+            class="h-48 bg-gradient-to-r from-primary via-accent-purple to-accent-teal"
+          ></div>
+
+          <!-- Profile Info -->
+          <div class="px-6 pb-6">
+            <div
+              class="flex flex-col sm:flex-row items-start sm:items-end -mt-16 sm:-mt-20 mb-8"
+            >
+              <!-- Profile Picture -->
+              <div class="relative mb-4 sm:mb-0">
+                <div
+                  class="w-32 h-32 rounded-full border-4 border-white shadow-lg flex items-center justify-center text-white font-bold text-4xl"
+                  :style="{ backgroundColor: getAvatarColor(user?.id) }"
+                >
+                  {{ getInitials(user?.full_name) }}
+                </div>
+              </div>
+
+              <!-- User Info & Actions -->
+              <div class="sm:ml-6 flex-1">
+                <div
+                  class="flex flex-col sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <div class="mb-4 sm:mb-0">
+                    <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">
+                      {{ user?.full_name }}
+                    </h1>
+                    <p class="text-gray-600 mt-1">
+                      @{{ user?.email?.split('@')[0] }}
+                    </p>
+                  </div>
+                  <button
+                    @click="openEditProfile"
+                    class="px-6 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg font-medium transition shadow-sm flex-shrink-0"
+                  >
+                    Edit Profile
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Stats Row -->
+            <div
+              class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6 pt-6 border-t border-gray-200"
+            >
+              <div class="text-center">
+                <div class="text-2xl font-bold text-gray-900">
+                  {{ stats.birthdayTwins }}
+                </div>
+                <div class="text-sm text-gray-600">Birthday Twins</div>
+              </div>
+              <div class="text-center">
+                <div class="text-2xl font-bold text-gray-900">
+                  {{ stats.friends }}
+                </div>
+                <div class="text-sm text-gray-600">Friends</div>
+              </div>
+              <div class="text-center">
+                <div class="text-2xl font-bold text-gray-900">
+                  {{ stats.posts }}
+                </div>
+                <div class="text-sm text-gray-600">Posts</div>
+              </div>
+              <div class="text-center">
+                <div class="text-xl font-bold text-gray-900">
+                  {{ formatBirthdayWithYear(user?.birth_date) }}
+                </div>
+                <div class="text-sm text-gray-600">Birthday</div>
+              </div>
+            </div>
+
+            <!-- Bio -->
+            <div v-if="user?.bio" class="mt-6 pt-6 border-t border-gray-200">
+              <h3 class="text-sm font-medium text-gray-500 mb-2">About</h3>
+              <p class="text-gray-700">{{ user.bio }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Details Card -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mt-6">
+          <h2 class="text-xl font-bold text-gray-900 mb-6">
+            Profile Information
+          </h2>
+          <div class="space-y-4">
+            <div class="flex items-start border-b border-gray-100 pb-4">
+              <div class="w-40 text-gray-600 font-medium">Full Name:</div>
+              <div class="flex-1 text-gray-900">{{ user?.full_name }}</div>
+            </div>
+            <div class="flex items-start border-b border-gray-100 pb-4">
+              <div class="w-40 text-gray-600 font-medium">Email:</div>
+              <div class="flex-1 text-gray-900">{{ user?.email }}</div>
+            </div>
+            <div class="flex items-start border-b border-gray-100 pb-4">
+              <div class="w-40 text-gray-600 font-medium">Birthday:</div>
+              <div class="flex-1 text-gray-900">
+                {{ formatBirthdayFull(user?.birth_date) }}
+              </div>
+            </div>
+            <div class="flex items-start border-b border-gray-100 pb-4">
+              <div class="w-40 text-gray-600 font-medium">Gender:</div>
+              <div class="flex-1 text-gray-900">{{ user?.gender }}</div>
+            </div>
+            <div class="flex items-start border-b border-gray-100 pb-4">
+              <div class="w-40 text-gray-600 font-medium">Location:</div>
+              <div class="flex-1 text-gray-900">
+                <div class="flex items-center">
+                  <svg
+                    class="w-5 h-5 mr-2 text-gray-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                    ></path>
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                    ></path>
+                  </svg>
+                  {{ user?.city }}, {{ user?.region }}, {{ user?.country }}
+                </div>
+              </div>
+            </div>
+            <div class="flex items-start">
+              <div class="w-40 text-gray-600 font-medium">Member Since:</div>
+              <div class="flex-1 text-gray-900">
+                {{ formatJoinDate(user?.created_at) }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Edit Profile Modal -->
+        <div
+          v-if="showEditProfile"
+          class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+          @click.self="closeEditProfile"
+        >
+          <div
+            class="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+          >
+            <div
+              class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between"
+            >
+              <h2 class="text-xl font-bold text-gray-900">Edit Profile</h2>
+              <button
+                @click="closeEditProfile"
+                class="text-gray-400 hover:text-gray-600 transition"
+              >
+                <svg
+                  class="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  ></path>
+                </svg>
+              </button>
+            </div>
+
+            <form @submit.prevent="saveProfile" class="p-6 space-y-6">
+              <!-- Full Name -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2"
+                  >Full Name</label
+                >
+                <input
+                  v-model="editForm.full_name"
+                  type="text"
+                  required
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                />
+              </div>
+
+              <!-- Bio -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2"
+                  >Bio</label
+                >
+                <textarea
+                  v-model="editForm.bio"
+                  rows="4"
+                  maxlength="500"
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
+                  placeholder="Tell us about yourself..."
+                ></textarea>
+                <p class="mt-1 text-sm text-gray-500">
+                  {{ editForm.bio?.length || 0 }}/500 characters
+                </p>
+              </div>
+
+              <!-- Location -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2"
+                    >City</label
+                  >
+                  <input
+                    v-model="editForm.city"
+                    type="text"
+                    required
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2"
+                    >Region/State</label
+                  >
+                  <input
+                    v-model="editForm.region"
+                    type="text"
+                    required
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2"
+                  >Country</label
+                >
+                <input
+                  v-model="editForm.country"
+                  type="text"
+                  required
+                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                />
+              </div>
+
+              <!-- Error Message -->
+              <div v-if="error" class="rounded-md bg-red-50 p-4">
+                <p class="text-sm text-red-800">{{ error }}</p>
+              </div>
+
+              <!-- Success Message -->
+              <div v-if="successMessage" class="rounded-md bg-green-50 p-4">
+                <p class="text-sm text-green-800">{{ successMessage }}</p>
+              </div>
+
+              <!-- Buttons -->
+              <div
+                class="flex justify-end space-x-3 pt-4 border-t border-gray-200"
+              >
+                <button
+                  type="button"
+                  @click="closeEditProfile"
+                  class="px-6 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg font-medium transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  :disabled="loading"
+                  class="px-6 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg font-medium transition disabled:opacity-50"
+                >
+                  <span v-if="!loading">Save Changes</span>
+                  <span v-else>Saving...</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div id="app-footer"></div>
+
+    <!-- Scripts -->
+    <script src="../js/utils.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/navigation.js"></script>
+
+    <script>
+      const { createApp } = Vue;
+
+      createApp({
+        data() {
+          return {
+            user: null,
+            showEditProfile: false,
+            editForm: {
+              full_name: "",
+              bio: "",
+              city: "",
+              region: "",
+              country: "",
+            },
+            stats: {
+              birthdayTwins: 0,
+              friends: 0,
+              posts: 0,
+              messages: 0,
+            },
+            loading: false,
+            error: null,
+            successMessage: null,
+          };
+        },
+        async mounted() {
+          // Check authentication
+          if (!requireAuth()) {
+            return;
+          }
+
+          // Load user data from API (fresh data)
+          try {
+            this.user = await api.users.getMe();
+          } catch (error) {
+            console.error("Error loading user:", error);
+            // Fallback to localStorage
+            this.user = getCurrentUser();
+          }
+
+          // Load stats
+          await this.loadStats();
+        },
+        methods: {
+          async loadStats() {
+            try {
+              const stats = await api.users.getStats();
+              this.stats = stats;
+            } catch (error) {
+              console.error("Error loading stats:", error);
+            }
+          },
+          openEditProfile() {
+            if (!this.user) {
+              console.error("User data not loaded");
+              return;
+            }
+            this.editForm = {
+              full_name: this.user.full_name || "",
+              bio: this.user.bio || "",
+              city: this.user.city || "",
+              region: this.user.region || "",
+              country: this.user.country || "",
+            };
+            this.showEditProfile = true;
+            this.error = null;
+            this.successMessage = null;
+          },
+          closeEditProfile() {
+            this.showEditProfile = false;
+            this.error = null;
+            this.successMessage = null;
+          },
+          async saveProfile() {
+            this.loading = true;
+            this.error = null;
+            this.successMessage = null;
+
+            try {
+              const updatedUser = await api.users.updateProfile(this.editForm);
+
+              // Update local user data
+              this.user = updatedUser;
+              localStorage.setItem("user", JSON.stringify(updatedUser));
+
+              this.successMessage = "Profile updated successfully!";
+
+              setTimeout(() => {
+                this.closeEditProfile();
+              }, 1500);
+            } catch (error) {
+              console.error("Error updating profile:", error);
+              this.error = error.message || "Failed to update profile";
+            } finally {
+              this.loading = false;
+            }
+          },
+          // Utility functions
+          getInitials(name) {
+            if (!name) return "??";
+            const parts = name.trim().split(" ");
+            if (parts.length === 1) {
+              return parts[0].substring(0, 2).toUpperCase();
+            }
+            return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+          },
+          getAvatarColor(userId) {
+            if (!userId) return "#6366F1";
+            const colors = [
+              "#6366F1",
+              "#A855F7",
+              "#14B8A6",
+              "#F59E0B",
+              "#EF4444",
+              "#10B981",
+              "#3B82F6",
+              "#EC4899",
+            ];
+            const hash = userId
+              .split("")
+              .reduce((acc, char) => acc + char.charCodeAt(0), 0);
+            return colors[hash % colors.length];
+          },
+          formatBirthday(dateString) {
+            if (!dateString) return "";
+            const date = new Date(dateString);
+            return date.toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+            });
+          },
+          formatBirthdayWithYear(dateString) {
+            if (!dateString) return "";
+            const date = new Date(dateString);
+            return date.toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            });
+          },
+          formatBirthdayFull(dateString) {
+            if (!dateString) return "";
+            const date = new Date(dateString);
+            return date.toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            });
+          },
+          formatJoinDate(dateString) {
+            if (!dateString) return "";
+            const date = new Date(dateString);
+            return date.toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "long",
+            });
+          },
+        },
+      }).mount("#app");
+    </script>
+  </body>
+</html>

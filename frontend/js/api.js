@@ -72,11 +72,16 @@ const api = {
         getBirthdayTwins: () => apiRequest('/users/birthday-twins'),
         getUser: (userId) => apiRequest(`/users/${userId}`),
         searchByBirthday: (year, month, day) => apiRequest(`/users/search/by-birthday?year=${year}&month=${month}&day=${day}`),
+        updateProfile: (data) => apiRequest('/users/me', {
+            method: 'PUT',
+            body: JSON.stringify(data),
+        }),
     },
 
     // Posts
     posts: {
         getFeed: (filter = 'friends') => apiRequest(`/posts/feed?filter_type=${filter}`),
+        getMyPosts: () => apiRequest('/posts/feed?filter_type=my'),
         create: (content, visibility = 'public') => apiRequest('/posts', {
             method: 'POST',
             body: JSON.stringify({ content, visibility }),

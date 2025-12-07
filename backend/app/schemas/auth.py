@@ -35,3 +35,26 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     """Token payload schema"""
     user_id: Optional[str] = None
+
+
+class ForgotPasswordRequest(BaseModel):
+    """Forgot password request schema"""
+    email: EmailStr
+
+
+class ForgotPasswordResponse(BaseModel):
+    """Forgot password response schema"""
+    success: bool
+    message: str
+
+
+class ResetPasswordRequest(BaseModel):
+    """Reset password request schema"""
+    token: str
+    new_password: str = Field(..., min_length=8)
+
+
+class ResetPasswordResponse(BaseModel):
+    """Reset password response schema"""
+    success: bool
+    message: str

@@ -131,8 +131,6 @@ function renderFooter() {
                     <ul class="space-y-2 text-sm">
                         <li><a href="index.html#features" class="hover:text-white transition">Features</a></li>
                         <li><a href="index.html#how-it-works" class="hover:text-white transition">How It Works</a></li>
-                        <li><a href="#pricing" class="hover:text-white transition">Pricing</a></li>
-                        <li><a href="#faq" class="hover:text-white transition">FAQ</a></li>
                     </ul>
                 </div>
 
@@ -141,8 +139,7 @@ function renderFooter() {
                     <h4 class="font-semibold text-white mb-4">Company</h4>
                     <ul class="space-y-2 text-sm">
                         <li><a href="index.html#about" class="hover:text-white transition">About Us</a></li>
-                        <li><a href="#blog" class="hover:text-white transition">Blog</a></li>
-                        <li><a href="#contact" class="hover:text-white transition">Contact</a></li>
+                        <li><a href="contact.html" class="hover:text-white transition">Contact</a></li>
                     </ul>
                 </div>
 
@@ -150,10 +147,8 @@ function renderFooter() {
                 <div>
                     <h4 class="font-semibold text-white mb-4">Legal</h4>
                     <ul class="space-y-2 text-sm">
-                        <li><a href="#privacy" class="hover:text-white transition">Privacy Policy</a></li>
-                        <li><a href="#terms" class="hover:text-white transition">Terms of Service</a></li>
-                        <li><a href="#cookies" class="hover:text-white transition">Cookie Policy</a></li>
-                        <li><a href="#guidelines" class="hover:text-white transition">Community Guidelines</a></li>
+                        <li><a href="privacy-policy.html" class="hover:text-white transition">Privacy Policy</a></li>
+                        <li><a href="terms-of-service.html" class="hover:text-white transition">Terms of Service</a></li>
                     </ul>
                 </div>
             </div>

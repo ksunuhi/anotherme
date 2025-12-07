@@ -194,11 +194,13 @@ frontend/
 
 - [ ] No email verification yet (users can register but email_verified=False)
 - [ ] No OAuth providers configured (Google/Facebook)
-- [ ] No password reset functionality
+- [✅] ~~No password reset functionality~~ (COMPLETED - Day 5)
+- [✅] ~~No contact form~~ (COMPLETED - Day 5)
 - [ ] No rate limiting
 - [ ] No input sanitization for XSS (add later)
 - [ ] No file upload for profile pictures yet
 - [ ] SQLite is single-threaded (fine for dev, need PostgreSQL for production)
+- [ ] Gmail SMTP credentials need to be configured in .env for email features
 
 ---
 
@@ -230,4 +232,76 @@ The todo list in Claude Code will automatically show what's next!
 
 ---
 
-Last Updated: 2025-11-22
+## Day 5 - Email System & Additional Features ✅
+
+**Date:** 2025-12-07
+**Status:** Contact form and password reset functionality complete
+
+### Completed Tasks
+
+#### Backend Email System (100%)
+- ✅ Email configuration in `.env.example` and `config.py`
+- ✅ SMTP email utility module (`app/core/email.py`)
+  - `send_email()` - Base SMTP sender using Gmail
+  - `send_contact_form_email()` - Contact form notifications to admin
+  - `send_password_reset_email()` - Password reset links with HTML templates
+- ✅ Password reset token model (`app/models/password_reset.py`)
+  - Secure token generation with `secrets.token_urlsafe()`
+  - 1-hour token expiration
+  - One-time use enforcement
+  - Token validation methods
+- ✅ Contact API endpoint (`POST /api/contact`)
+- ✅ Forgot password endpoint (`POST /api/auth/forgot-password`)
+- ✅ Reset password endpoint (`POST /api/auth/reset-password`)
+- ✅ Database schema updated with `password_reset_tokens` table
+
+#### Frontend Pages (100%)
+- ✅ `contact.html` - Contact form with validation
+- ✅ `forgot-password.html` - Request password reset
+- ✅ `reset-password.html` - Set new password with token
+- ✅ Updated `login.html` with "Forgot password?" link
+- ✅ Updated `navigation.js` to link to contact page
+- ✅ Legal pages created:
+  - `privacy-policy.html` - Comprehensive privacy policy
+  - `terms-of-service.html` - Complete terms of service
+
+#### UI/UX Improvements (100%)
+- ✅ Simplified profile page (removed redundant tabs)
+- ✅ Fixed Vue.js rendering issues on profile page
+- ✅ Updated landing page copy (removed profit-related language)
+- ✅ Cleaned up footer navigation links
+
+### Email System Features
+- Gmail SMTP integration (free, 500 emails/day limit)
+- Professional HTML email templates
+- Security-focused implementation:
+  - Email enumeration prevention (same response for valid/invalid emails)
+  - Secure token generation
+  - Token expiration and one-time use
+  - Password strength validation on reset
+
+### Files Created/Modified
+**Backend:**
+- `app/core/email.py` (new)
+- `app/models/password_reset.py` (new)
+- `app/schemas/contact.py` (new)
+- `app/schemas/auth.py` (updated - added reset schemas)
+- `app/api/contact.py` (new)
+- `app/api/auth.py` (updated - added forgot/reset endpoints)
+- `main.py` (updated - registered contact router)
+- `database/schema.sql` (updated - added password_reset_tokens table)
+
+**Frontend:**
+- `pages/contact.html` (new)
+- `pages/forgot-password.html` (new)
+- `pages/reset-password.html` (new)
+- `pages/privacy-policy.html` (new)
+- `pages/terms-of-service.html` (new)
+- `pages/login.html` (updated)
+- `pages/profile.html` (major rewrite)
+- `pages/index.html` (updated)
+- `js/navigation.js` (updated)
+
+---
+
+Last Updated: 2025-12-07
