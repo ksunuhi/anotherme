@@ -44,20 +44,17 @@ CREATE TABLE IF NOT EXISTS posts (
     author_id TEXT NOT NULL,
     title TEXT CHECK(length(title) <= 200),
     content TEXT NOT NULL CHECK(length(content) <= 2000),
-    visibility TEXT NOT NULL CHECK(visibility IN ('public', 'birthday_twins', 'friends', 'group')),
-    group_id TEXT,  -- NULL if not a group post
+    visibility TEXT NOT NULL CHECK(visibility IN ('public', 'birthday_twins', 'friends')),
     like_count INTEGER DEFAULT 0,
     comment_count INTEGER DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (group_id) REFERENCES groups(id) ON DELETE CASCADE
+    FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 -- Indexes for posts
 CREATE INDEX IF NOT EXISTS idx_posts_author_id ON posts(author_id);
 CREATE INDEX IF NOT EXISTS idx_posts_visibility ON posts(visibility);
-CREATE INDEX IF NOT EXISTS idx_posts_group_id ON posts(group_id);
 CREATE INDEX IF NOT EXISTS idx_posts_created_at ON posts(created_at DESC);
 
 -- ============================================
@@ -122,45 +119,6 @@ CREATE TABLE IF NOT EXISTS friendships (
 -- Indexes for friendships
 CREATE INDEX IF NOT EXISTS idx_friendships_user_id ON friendships(user_id);
 CREATE INDEX IF NOT EXISTS idx_friendships_friend_id ON friendships(friend_id);
-
--- ============================================
--- Groups Table (Birthday-based)
--- ============================================
-CREATE TABLE IF NOT EXISTS groups (
-    id TEXT PRIMARY KEY,
-    name TEXT NOT NULL,
-    description TEXT,
-    group_type TEXT NOT NULL CHECK(group_type IN ('birthday', 'custom')),
-    birth_year INTEGER,   -- For birthday groups
-    birth_month INTEGER CHECK(birth_month BETWEEN 1 AND 12),  -- For birthday groups
-    birth_day INTEGER CHECK(birth_day BETWEEN 1 AND 31),      -- For birthday groups
-    member_count INTEGER DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Indexes for groups
-CREATE INDEX IF NOT EXISTS idx_groups_type ON groups(group_type);
-CREATE INDEX IF NOT EXISTS idx_groups_birthday ON groups(birth_year, birth_month, birth_day);
-
--- ============================================
--- Group Memberships Table
--- ============================================
-CREATE TABLE IF NOT EXISTS group_memberships (
-    id TEXT PRIMARY KEY,
-    user_id TEXT NOT NULL,
-    group_id TEXT NOT NULL,
-    joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    is_active BOOLEAN DEFAULT 1,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (group_id) REFERENCES groups(id) ON DELETE CASCADE,
-    UNIQUE(user_id, group_id)  -- User can only join a group once
-);
-
--- Indexes for group memberships
-CREATE INDEX IF NOT EXISTS idx_group_memberships_user_id ON group_memberships(user_id);
-CREATE INDEX IF NOT EXISTS idx_group_memberships_group_id ON group_memberships(group_id);
-CREATE INDEX IF NOT EXISTS idx_group_memberships_is_active ON group_memberships(is_active);
 
 -- ============================================
 -- Post Likes Table
@@ -256,30 +214,6 @@ BEGIN
     UPDATE posts SET comment_count = comment_count - 1 WHERE id = OLD.post_id;
 END;
 
--- Update group member_count when memberships change
-CREATE TRIGGER IF NOT EXISTS update_group_member_count_insert
-AFTER INSERT ON group_memberships
-WHEN NEW.is_active = 1
-BEGIN
-    UPDATE groups SET member_count = member_count + 1 WHERE id = NEW.group_id;
-END;
-
-CREATE TRIGGER IF NOT EXISTS update_group_member_count_delete
-AFTER DELETE ON group_memberships
-WHEN OLD.is_active = 1
-BEGIN
-    UPDATE groups SET member_count = member_count - 1 WHERE id = OLD.group_id;
-END;
-
-CREATE TRIGGER IF NOT EXISTS update_group_member_count_update
-AFTER UPDATE OF is_active ON group_memberships
-WHEN OLD.is_active != NEW.is_active
-BEGIN
-    UPDATE groups
-    SET member_count = member_count + CASE WHEN NEW.is_active = 1 THEN 1 ELSE -1 END
-    WHERE id = NEW.group_id;
-END;
-
 -- Update timestamps
 CREATE TRIGGER IF NOT EXISTS update_users_timestamp
 AFTER UPDATE ON users
@@ -297,10 +231,4 @@ CREATE TRIGGER IF NOT EXISTS update_comments_timestamp
 AFTER UPDATE ON comments
 BEGIN
     UPDATE comments SET updated_at = CURRENT_TIMESTAMP WHERE id = NEW.id;
-END;
-
-CREATE TRIGGER IF NOT EXISTS update_groups_timestamp
-AFTER UPDATE ON groups
-BEGIN
-    UPDATE groups SET updated_at = CURRENT_TIMESTAMP WHERE id = NEW.id;
 END;

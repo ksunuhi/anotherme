@@ -124,18 +124,4 @@ const api = {
         }),
         check: (userId) => apiRequest(`/friends/check/${userId}`),
     },
-
-    // Groups
-    groups: {
-        getAll: () => apiRequest('/groups'),
-        getGroup: (groupId) => apiRequest(`/groups/${groupId}`),
-        getMembers: (groupId) => apiRequest(`/groups/${groupId}/members`),
-        getPosts: (groupId) => apiRequest(`/groups/${groupId}/posts`),
-        join: (groupId) => apiRequest(`/groups/${groupId}/join`, {
-            method: 'POST',
-        }),
-        leave: (groupId) => apiRequest(`/groups/${groupId}/leave`, {
-            method: 'POST',
-        }),
-    },
 };

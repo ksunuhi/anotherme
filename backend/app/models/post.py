@@ -14,8 +14,7 @@ class Post(Base):
     author_id = Column(String, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     title = Column(String(200))
     content = Column(Text, nullable=False)  # Max 2000 chars enforced at API level
-    visibility = Column(String, nullable=False, index=True)  # public, birthday_twins, friends, group
-    group_id = Column(String, ForeignKey("groups.id", ondelete="CASCADE"), index=True)
+    visibility = Column(String, nullable=False, index=True)  # public, birthday_twins, friends
     like_count = Column(Integer, default=0)
     comment_count = Column(Integer, default=0)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), index=True)

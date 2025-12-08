@@ -55,7 +55,6 @@ function renderHeader() {
                             <!-- Dropdown Menu -->
                             <div id="userMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 border border-gray-200">
                                 <a href="profile.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">My Profile</a>
-                                <a href="settings.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Settings</a>
                                 <hr class="my-2">
                                 <a href="#" onclick="handleLogout(); return false;" class="block px-4 py-2 text-red-600 hover:bg-gray-100">Sign Out</a>
                             </div>
@@ -85,7 +84,6 @@ function renderHeader() {
                     <a href="friends.html" class="block py-2 text-gray-700 hover:text-primary transition">Friends</a>
                     <hr class="my-2">
                     <a href="profile.html" class="block py-2 text-gray-700 hover:text-primary transition">My Profile</a>
-                    <a href="settings.html" class="block py-2 text-gray-700 hover:text-primary transition">Settings</a>
                     <a href="#" onclick="handleLogout(); return false;" class="block py-2 text-red-600 hover:text-primary transition">Sign Out</a>
                 ` : `
                     <a href="index.html#home" class="block py-2 text-gray-700 hover:text-primary transition">Home</a>

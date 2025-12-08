@@ -9,9 +9,8 @@ from datetime import datetime
 class PostCreate(BaseModel):
     """Schema for creating a post"""
     content: str = Field(..., min_length=1, max_length=2000)
-    visibility: str = Field(default="public")  # public, birthday_twins, friends, group
+    visibility: str = Field(default="public")  # public, birthday_twins, friends
     title: Optional[str] = Field(None, max_length=200)
-    group_id: Optional[str] = None
 
 
 class PostUpdate(BaseModel):
@@ -39,7 +38,6 @@ class PostResponse(BaseModel):
     title: Optional[str]
     content: str
     visibility: str
-    group_id: Optional[str]
     like_count: int
     comment_count: int
     created_at: datetime

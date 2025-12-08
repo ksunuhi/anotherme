@@ -41,8 +41,7 @@ async def create_post(
         author_id=current_user.id,
         title=post_data.title,
         content=post_data.content,
-        visibility=post_data.visibility,
-        group_id=post_data.group_id
+        visibility=post_data.visibility
     )
 
     db.add(new_post)
