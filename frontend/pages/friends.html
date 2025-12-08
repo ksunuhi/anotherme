@@ -402,6 +402,13 @@
                 // Load user data
                 this.user = getCurrentUser();
 
+                // Check URL parameter for tab
+                const urlParams = new URLSearchParams(window.location.search);
+                const tab = urlParams.get('tab');
+                if (tab === 'friends' || tab === 'twins') {
+                    this.activeTab = tab;
+                }
+
                 // Load data
                 await this.loadData();
             },

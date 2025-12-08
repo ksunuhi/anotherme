@@ -282,8 +282,8 @@
                     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="font-bold text-gray-900">👥 My Friends ({{ stats.friends }})</h3>
-                            <a href="friends.html" class="text-sm text-primary hover:text-primary-dark font-medium">
-                                View All
+                            <a href="friends.html?tab=friends" class="text-sm text-primary hover:text-primary-dark font-medium">
+                                Manage
                             </a>
                         </div>
                         <div class="space-y-3">
@@ -321,6 +321,7 @@
                         </div>
                         <div class="space-y-2">
                             <div v-for="message in recentMessages.slice(0, 3)" :key="message.id"
+                                 @click="sendMessage(message.from.id)"
                                  class="p-3 hover:bg-gray-50 rounded-lg cursor-pointer border border-gray-200 transition">
                                 <div class="flex items-start space-x-3">
                                     <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm flex-shrink-0"
@@ -417,9 +418,8 @@
                         // Load friends
                         await this.loadFriends();
 
-                        // TODO: Load messages when messages API is ready
-                        // const messages = await api.messages.getConversations();
-                        // this.recentMessages = messages.slice(0, 3);
+                        // Load messages
+                        await this.loadMessages();
                     } catch (error) {
                         console.error('Error loading dashboard data:', error);
                         if (error.message.includes('401')) {
@@ -460,6 +460,30 @@
                         }));
                     } catch (error) {
                         console.error('Error loading friends:', error);
+                    }
+                },
+                async loadMessages() {
+                    try {
+                        // Load conversations
+                        const conversations = await api.messages.getConversations();
+
+                        // Transform to match template structure
+                        this.recentMessages = conversations.slice(0, 3).map(conv => ({
+                            id: conv.user_id,
+                            from: {
+                                id: conv.user_id,
+                                name: conv.user_name || conv.user_display_name
+                            },
+                            preview: conv.last_message,
+                            timestamp: conv.last_message_time,
+                            unread: conv.unread_count > 0
+                        }));
+
+                        // Get unread count for stats
+                        const unreadData = await api.messages.getUnreadCount();
+                        this.stats.messages = unreadData.unread_count || 0;
+                    } catch (error) {
+                        console.error('Error loading messages:', error);
                     }
                 },
                 getBirthdayMessage() {
@@ -590,18 +614,9 @@
                         }
                     }
                 },
-                async findMyBirthdayTwins() {
-                    if (!this.user) return;
-
-                    try {
-                        const twins = await api.users.getBirthdayTwins();
-                        // TODO: Navigate to birthday twins page or show results
-                        alert(`Found ${twins.length} birthday twins!\n\nThis will navigate to search results page (coming soon).`);
-                        console.log('Birthday twins:', twins);
-                    } catch (error) {
-                        console.error('Error finding birthday twins:', error);
-                        alert('Failed to find birthday twins: ' + error.message);
-                    }
+                findMyBirthdayTwins() {
+                    // Navigate to friends page with Birthday Twins tab active
+                    window.location.href = 'friends.html?tab=twins';
                 },
                 sendMessage(friendId) {
                     // TODO: Navigate to message page
