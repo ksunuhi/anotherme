@@ -410,4 +410,93 @@ DROP TABLE IF EXISTS groups;
 
 ---
 
-Last Updated: 2025-12-08
+## Day 7 - Security Improvements: Auto-Logout on Inactivity ✅
+
+**Date:** 2025-12-11
+**Status:** Automatic logout functionality implemented
+
+### Completed Tasks
+
+#### 1. JWT Token Expiration Reduction (100%)
+- ✅ Reduced JWT token expiration from **30 days → 1 hour**
+  - Updated `backend/app/core/config.py`
+  - Changed `ACCESS_TOKEN_EXPIRE_MINUTES` from 43,200 to 60
+  - Updated `backend/.env.example` to reflect new default
+- ✅ Prevents indefinite login sessions
+- ✅ Improves security with shorter token lifetime
+
+#### 2. Frontend Inactivity Tracking (100%)
+- ✅ Implemented automatic logout after 30 minutes of inactivity
+  - Updated `frontend/js/auth.js` with inactivity tracking
+  - Tracks user activity: mouse movement, clicks, keyboard input, scroll, touch events
+  - Timer resets on any user activity
+  - Shows alert before logout: "You have been logged out due to inactivity"
+- ✅ Activity events tracked:
+  - `mousedown`, `mousemove`, `keypress`, `scroll`, `touchstart`, `click`
+- ✅ Inactivity timer automatically initializes on:
+  - User login (`saveAuth()`)
+  - Page load for authenticated users (`requireAuth()`)
+- ✅ Timer cleanup on manual logout to prevent memory leaks
+
+### Security Improvements
+
+**Before:**
+- JWT tokens valid for 30 days (43,200 minutes)
+- No inactivity tracking
+- User stays logged in indefinitely
+
+**After:**
+- JWT tokens valid for 1 hour (60 minutes)
+- Automatic logout after 30 minutes of inactivity
+- Combined security: both time-based and activity-based
+
+### How It Works
+
+1. **On Login**: Inactivity timer starts automatically
+2. **User Activity**: Any interaction resets the 30-minute timer
+3. **30 Minutes Idle**: Alert shown, user logged out, redirected to login page
+4. **Token Expiration**: Even if user stays active, token expires after 1 hour (requires re-login)
+
+### Files Modified
+
+**Backend:**
+- `backend/app/core/config.py` (token expiration: 43200 → 60 minutes)
+- `backend/.env.example` (updated ACCESS_TOKEN_EXPIRE_MINUTES)
+
+**Frontend:**
+- `frontend/js/auth.js` (added inactivity tracking system)
+  - New functions: `initInactivityTracking()`, `resetInactivityTimer()`, `logoutDueToInactivity()`
+  - New constants: `INACTIVITY_TIMEOUT`, `inactivityTimer`, `lastActivityTime`
+
+### Testing Instructions
+
+To test the auto-logout feature:
+
+1. **Quick Test (5 seconds)**: Temporarily change timeout
+   ```javascript
+   // In frontend/js/auth.js, line 6:
+   const INACTIVITY_TIMEOUT = 5 * 1000; // 5 seconds for testing
+   ```
+
+2. **Test Steps**:
+   - Login to the application
+   - Navigate to dashboard
+   - Don't interact (no mouse/keyboard) for 5 seconds
+   - Alert should appear and redirect to login page
+
+3. **Production Test (30 minutes)**: Restore original timeout
+   ```javascript
+   const INACTIVITY_TIMEOUT = 30 * 60 * 1000; // 30 minutes
+   ```
+
+### Notes
+
+- Inactivity timeout set to 30 minutes (configurable via `INACTIVITY_TIMEOUT` constant)
+- JWT token expiration set to 1 hour (configurable via `.env` file)
+- Activity tracking uses passive event listeners for better performance
+- Timer properly cleaned up on logout to prevent memory leaks
+- Works across all pages (timer initializes on any protected page load)
+
+---
+
+Last Updated: 2025-12-11

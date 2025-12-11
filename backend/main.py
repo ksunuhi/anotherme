@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.core.database import engine, Base
-from app.api import auth, posts, users, friends, messages, contact
+from app.api import auth, posts, users, friends, messages, contact, statistics
 
 # Create database tables (only needed if not using schema.sql)
 # Base.metadata.create_all(bind=engine)
@@ -52,6 +52,7 @@ app.include_router(users.router, prefix="/api/users", tags=["Users"])
 app.include_router(friends.router, prefix="/api/friends", tags=["Friends"])
 app.include_router(messages.router, prefix="/api/messages", tags=["Messages"])
 app.include_router(contact.router, prefix="/api/contact", tags=["Contact"])
+app.include_router(statistics.router, prefix="/api/statistics", tags=["Statistics"])
 
 # Additional routers to be added:
 # app.include_router(groups.router, prefix="/api/groups", tags=["Groups"])

@@ -124,4 +124,22 @@ const api = {
         }),
         check: (userId) => apiRequest(`/friends/check/${userId}`),
     },
+
+    // Public APIs (No authentication required)
+    public: {
+        // Get recent signups
+        getRecentUsers: (limit = 3) => apiRequest(`/users/recent?limit=${limit}`),
+
+        // Search by birthday (public, limited results)
+        searchByBirthday: (dateStr) => apiRequest(`/users/public/search-by-birthday?date_str=${dateStr}`),
+
+        // Get count of users with specific birthday
+        getBirthdayCount: (dateStr) => apiRequest(`/users/public/search-by-birthday/count?date_str=${dateStr}`),
+
+        // Get public profile
+        getPublicProfile: (userId) => apiRequest(`/users/public/${userId}`),
+
+        // Get platform statistics
+        getStatistics: () => apiRequest('/statistics/birthday-stats'),
+    },
 };

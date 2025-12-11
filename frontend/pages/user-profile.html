@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile - AnotherMe</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366F1',
+                        'primary-dark': '#4F46E5',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50">
+    <!-- Header / Navigation -->
+    <div id="app-header"></div>
+
+    <!-- Main Content -->
+    <div id="app" class="container mx-auto px-4 pt-24 pb-8 max-w-5xl">
+        <!-- Loading State -->
+        <div v-if="loading" class="text-center py-20">
+            <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            <p class="mt-4 text-gray-600">Loading profile...</p>
+        </div>
+
+        <!-- Error State -->
+        <div v-else-if="error" class="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+            <p class="text-red-600">{{ error }}</p>
+            <a href="index.html" class="mt-4 inline-block text-primary hover:underline">← Back to Home</a>
+        </div>
+
+        <!-- Profile Content -->
+        <div v-else-if="profile">
+            <!-- Profile Header -->
+            <div class="bg-white rounded-lg shadow-sm p-8 mb-6">
+                <div class="flex items-start gap-6">
+                    <!-- Avatar -->
+                    <div class="flex-shrink-0">
+                        <div v-if="profile.user.profile_picture_url" class="w-24 h-24 rounded-full overflow-hidden">
+                            <img :src="profile.user.profile_picture_url" :alt="profile.user.full_name" class="w-full h-full object-cover">
+                        </div>
+                        <div v-else class="w-24 h-24 bg-primary rounded-full flex items-center justify-center text-white text-3xl font-bold">
+                            {{ getInitials(profile.user.full_name) }}
+                        </div>
+                    </div>
+
+                    <!-- Profile Info -->
+                    <div class="flex-1">
+                        <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ profile.user.display_name || profile.user.full_name }}</h1>
+                        <p v-if="profile.user.bio" class="text-gray-600 mb-4">{{ profile.user.bio }}</p>
+
+                        <!-- Profile Details -->
+                        <div class="space-y-2 text-sm text-gray-600">
+                            <div v-if="profile.user.birth_date">
+                                <span class="font-semibold">📅 Birthday:</span> {{ formatDate(profile.user.birth_date) }}
+                            </div>
+                            <div v-if="profile.user.city || profile.user.country">
+                                <span class="font-semibold">📍 Location:</span>
+                                {{ [profile.user.city, profile.user.region, profile.user.country].filter(Boolean).join(', ') }}
+                            </div>
+                            <div v-if="profile.user.created_at">
+                                <span class="font-semibold">👤 Member since:</span> {{ formatDate(profile.user.created_at) }}
+                            </div>
+                        </div>
+
+                        <!-- Stats -->
+                        <div class="flex gap-6 mt-6">
+                            <div>
+                                <div class="text-2xl font-bold text-primary">{{ profile.stats.posts }}</div>
+                                <div class="text-sm text-gray-600">Posts</div>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold text-primary">{{ profile.stats.friends }}</div>
+                                <div class="text-sm text-gray-600">Friends</div>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold text-primary">{{ profile.stats.birthdayTwins }}</div>
+                                <div class="text-sm text-gray-600">Birthday Twins</div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons (if user is logged in) -->
+                        <div v-if="isLoggedIn" class="flex gap-3 mt-6">
+                            <button @click="sendMessage" class="bg-primary hover:bg-primary-dark text-white px-6 py-2 rounded-lg transition">
+                                💬 Message
+                            </button>
+                            <button @click="addFriend" class="bg-white hover:bg-gray-50 text-primary border-2 border-primary px-6 py-2 rounded-lg transition">
+                                ➕ Add Friend
+                            </button>
+                        </div>
+
+                        <!-- Login Prompt (if not logged in) -->
+                        <div v-else class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                            <p class="text-sm text-blue-800">
+                                <a href="login.html" class="font-semibold hover:underline">Login</a> or
+                                <a href="register.html" class="font-semibold hover:underline">Sign up</a> to message or add as friend
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Posts Section -->
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">Posts</h2>
+
+                <!-- No Posts -->
+                <div v-if="profile.posts.length === 0" class="text-center py-12 text-gray-500">
+                    No public posts yet
+                </div>
+
+                <!-- Posts List -->
+                <div v-else class="space-y-6">
+                    <div v-for="post in profile.posts" :key="post.id" class="border-b border-gray-200 pb-6 last:border-b-0">
+                        <p class="text-gray-800 mb-3 whitespace-pre-wrap">{{ post.content }}</p>
+                        <div class="flex items-center gap-4 text-sm text-gray-500">
+                            <span>{{ formatDate(post.created_at) }}</span>
+                            <span>❤️ {{ post.like_count }} likes</span>
+                            <span>💬 {{ post.comment_count }} comments</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div id="app-footer"></div>
+
+    <!-- Scripts -->
+    <script src="../js/utils.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/navigation.js"></script>
+
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    profile: null,
+                    loading: true,
+                    error: null,
+                    isLoggedIn: false,
+                };
+            },
+            async mounted() {
+                // Check if user is logged in
+                this.isLoggedIn = isAuthenticated();
+
+                // Get user ID from URL parameter
+                const urlParams = new URLSearchParams(window.location.search);
+                const userId = urlParams.get('id');
+
+                if (!userId) {
+                    this.error = 'No user ID provided';
+                    this.loading = false;
+                    return;
+                }
+
+                await this.loadProfile(userId);
+            },
+            methods: {
+                async loadProfile(userId) {
+                    try {
+                        this.profile = await api.public.getPublicProfile(userId);
+                        this.loading = false;
+                    } catch (error) {
+                        console.error('Error loading profile:', error);
+                        this.error = error.message || 'Failed to load profile';
+                        this.loading = false;
+                    }
+                },
+                getInitials(name) {
+                    if (!name) return '?';
+                    return name
+                        .split(' ')
+                        .map(n => n[0])
+                        .join('')
+                        .toUpperCase()
+                        .substring(0, 2);
+                },
+                formatDate(dateStr) {
+                    if (!dateStr) return '';
+                    const date = new Date(dateStr);
+                    return date.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
+                },
+                sendMessage() {
+                    // Redirect to messages page with this user
+                    window.location.href = `messages.html?user=${this.profile.user.id}`;
+                },
+                async addFriend() {
+                    if (!this.isLoggedIn) {
+                        window.location.href = 'login.html';
+                        return;
+                    }
+
+                    try {
+                        await api.friends.add(this.profile.user.id);
+                        alert('Friend request sent!');
+                    } catch (error) {
+                        console.error('Error adding friend:', error);
+                        alert(error.message || 'Failed to add friend');
+                    }
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
