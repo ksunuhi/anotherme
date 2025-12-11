@@ -12,7 +12,7 @@ from app.api.auth import get_current_user
 from app.models.user import User
 from app.models.post import Post, PostLike, Comment
 from app.models.friendship import Friendship
-from app.schemas.post import PostCreate, PostUpdate, PostResponse, PostAuthor
+from app.schemas.post import PostCreate, PostUpdate, PostResponse, PostAuthor, CommentCreate, CommentResponse
 
 router = APIRouter()
 
@@ -275,18 +275,131 @@ async def like_post(
     ).first()
 
     if existing_like:
-        # Unlike
+        # Unlike (trigger will auto-decrement like_count)
         db.delete(existing_like)
-        post.like_count = max(0, post.like_count - 1)
         db.commit()
+        db.refresh(post)  # Refresh to get updated like_count from trigger
         return {"liked": False, "like_count": post.like_count}
     else:
-        # Like
+        # Like (trigger will auto-increment like_count)
         new_like = PostLike(
             user_id=current_user.id,
             post_id=post_id
         )
         db.add(new_like)
-        post.like_count += 1
         db.commit()
+        db.refresh(post)  # Refresh to get updated like_count from trigger
         return {"liked": True, "like_count": post.like_count}
+
+
+# ===== COMMENT ENDPOINTS =====
+
+@router.get("/{post_id}/comments", response_model=List[CommentResponse])
+async def get_comments(
+    post_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Get all comments for a post
+    """
+    # Check if post exists
+    post = db.query(Post).filter(Post.id == post_id).first()
+    if not post:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Post not found"
+        )
+
+    # Get comments (only top-level, no replies for now)
+    comments = db.query(Comment).filter(
+        Comment.post_id == post_id
+    ).order_by(Comment.created_at.asc()).all()
+
+    # Get all unique author IDs
+    author_ids = list(set([c.author_id for c in comments]))
+    authors = db.query(User).filter(User.id.in_(author_ids)).all()
+    authors_dict = {a.id: get_post_author(a) for a in authors}
+
+    # Prepare response
+    result = []
+    for comment in comments:
+        comment_response = CommentResponse.model_validate(comment)
+        comment_response.author = authors_dict.get(comment.author_id)
+        result.append(comment_response)
+
+    return result
+
+
+@router.post("/{post_id}/comments", response_model=CommentResponse, status_code=status.HTTP_201_CREATED)
+async def create_comment(
+    post_id: str,
+    comment_data: CommentCreate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Create a comment on a post
+    """
+    # Check if post exists
+    post = db.query(Post).filter(Post.id == post_id).first()
+    if not post:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Post not found"
+        )
+
+    # Create comment
+    new_comment = Comment(
+        post_id=post_id,
+        author_id=current_user.id,
+        content=comment_data.content,
+        parent_comment_id=comment_data.parent_comment_id
+    )
+
+    db.add(new_comment)
+    db.commit()
+    db.refresh(new_comment)
+    db.refresh(post)  # Refresh to get updated comment_count from trigger
+
+    # Prepare response
+    response = CommentResponse.model_validate(new_comment)
+    response.author = get_post_author(current_user)
+
+    return response
+
+
+@router.delete("/{post_id}/comments/{comment_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_comment(
+    post_id: str,
+    comment_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Delete a comment (only by author)
+    """
+    comment = db.query(Comment).filter(
+        and_(
+            Comment.id == comment_id,
+            Comment.post_id == post_id
+        )
+    ).first()
+
+    if not comment:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Comment not found"
+        )
+
+    # Check if user is the author
+    if comment.author_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You can only delete your own comments"
+        )
+
+    db.delete(comment)
+    db.commit()
+
+    return None

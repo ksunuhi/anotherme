@@ -97,6 +97,14 @@ const api = {
         like: (postId) => apiRequest(`/posts/${postId}/like`, {
             method: 'POST',
         }),
+        getComments: (postId) => apiRequest(`/posts/${postId}/comments`),
+        createComment: (postId, content) => apiRequest(`/posts/${postId}/comments`, {
+            method: 'POST',
+            body: JSON.stringify({ content }),
+        }),
+        deleteComment: (postId, commentId) => apiRequest(`/posts/${postId}/comments/${commentId}`, {
+            method: 'DELETE',
+        }),
     },
 
     // Messages

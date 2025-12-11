@@ -499,4 +499,373 @@ To test the auto-logout feature:
 
 ---
 
-Last Updated: 2025-12-11
+## Day 8 - Bug Fixes & Comments Feature ✅
+
+**Date:** 2025-12-11 (Afternoon)
+**Status:** Comments functionality complete, auto-refresh working
+
+### Completed Tasks
+
+#### 1. UI/UX Improvements (100%)
+- ✅ **Professional Sign-Out Modal** (`frontend/js/navigation.js`)
+  - Replaced browser's `confirm()` with custom centered modal
+  - Removed "localhost..." URL display
+  - Added icon, animations, and better styling
+  - Click outside modal or "Cancel" button to close
+
+- ✅ **Email Validation on Registration** (`frontend/pages/register.html`, `backend/app/api/auth.py`)
+  - Added backend endpoint: `GET /api/auth/check-email`
+  - Validates email availability before proceeding to Step 2
+  - Shows professional modal if email already exists
+  - Options: "Go to Sign In" or "Use Different Email"
+  - Prevents wasted time filling out full registration form
+
+- ✅ **Registration Form Layout** (`frontend/pages/register.html`)
+  - Step 3 (Location): City & Region now side-by-side
+  - Country gets full width
+  - Bio textarea increased from 3 rows → 10 rows
+  - More inviting space encourages users to write more
+
+- ✅ **Form Label Font Size** (Multiple files)
+  - Increased from `text-sm` (14px) → `text-base` (16px)
+  - Updated 20 labels across all forms:
+    - `index.html` - Birthday search (1 label)
+    - `login.html` - Email, Password (2 labels)
+    - `register.html` - All fields (10 labels)
+    - `contact.html` - Name, Email, Subject, Message (4 labels)
+    - `forgot-password.html` - Email (1 label)
+    - `reset-password.html` - Password, Confirm (2 labels)
+  - Better readability and visual hierarchy
+
+#### 2. Timezone Fix (100%)
+- ✅ **Backend Datetime Serialization** (Multiple schema files)
+  - Added `@field_serializer` to ensure UTC timestamps with "Z" suffix
+  - Fixed: `backend/app/schemas/message.py` (MessageResponse, ConversationResponse)
+  - Fixed: `backend/app/schemas/post.py` (PostResponse, CommentResponse)
+  - Fixed: `backend/app/schemas/user.py` (UserResponse)
+  - Problem: Messages showed "9h ago" instead of "Just now" (Japan timezone)
+  - Solution: All timestamps now sent as `"2025-12-11T06:00:00.000Z"`
+  - JavaScript correctly converts UTC → JST for display
+
+#### 3. Dashboard Auto-Refresh (100%)
+- ✅ **Message Auto-Refresh** (`frontend/pages/dashboard.html`)
+  - Messages widget refreshes every 30 seconds
+  - Shows toast notification when new messages arrive
+  - Updates unread count automatically
+  - Properly cleaned up on page exit
+
+- ✅ **Posts & Comments Auto-Refresh** (NEW)
+  - Posts feed refreshes every 30 seconds
+  - Comment sections auto-refresh if open
+  - Shows new posts, updated like counts, new comments
+  - Preserves UI state (which comment sections are open)
+  - No manual refresh (F5) needed!
+
+#### 4. Bug Fixes (100%)
+- ✅ **Like Button Double-Increment Bug** (`backend/app/api/posts.py`)
+  - Problem: Like count increased by 2 instead of 1
+  - Root cause: Database triggers + manual increment = double counting
+  - Solution: Removed manual increment, use `db.refresh(post)` after trigger
+  - Now correctly increments by 1
+
+#### 5. Comments Feature - COMPLETE (100%)
+- ✅ **Backend API Endpoints** (`backend/app/api/posts.py`)
+  - `GET /api/posts/{post_id}/comments` - Get all comments for a post
+  - `POST /api/posts/{post_id}/comments` - Create a comment
+  - `DELETE /api/posts/{post_id}/comments/{comment_id}` - Delete comment (author only)
+  - Comment models already existed in database
+  - Added proper authorization checks
+
+- ✅ **Frontend API Methods** (`frontend/js/api.js`)
+  - `api.posts.getComments(postId)`
+  - `api.posts.createComment(postId, content)`
+  - `api.posts.deleteComment(postId, commentId)`
+
+- ✅ **Comment UI** (`frontend/pages/dashboard.html`)
+  - Click "Comment" button to toggle comments section
+  - View all comments with author avatars, names, timestamps
+  - Add new comments with textarea
+  - Delete own comments (button only shows for your comments)
+  - Press Ctrl+Enter to quickly post comment
+  - Clean, professional design matching posts UI
+  - Auto-refreshes every 30 seconds
+
+### Features Now Working
+- ✅ Professional modals (sign-out, email validation)
+- ✅ Email validation before registration
+- ✅ Better form layouts with larger bio field
+- ✅ Larger, readable form labels
+- ✅ Correct timezone display (UTC → Local)
+- ✅ Auto-refresh for messages, posts, and comments
+- ✅ Like button works correctly (+1, not +2)
+- ✅ Full comments functionality with real-time updates
+
+### Performance Notes
+- **Auto-refresh load**: ~66 requests/second for 1000 concurrent users
+  - Messages: 33 req/s
+  - Posts/Comments: 33 req/s
+- **Acceptable** for target scale (1000 users at launch)
+- Can optimize with WebSockets when scaling to 10,000+ users
+
+### Files Modified Today
+
+**Backend:**
+- `backend/app/api/auth.py` (added check-email endpoint)
+- `backend/app/api/posts.py` (fixed like bug, added comment endpoints)
+- `backend/app/schemas/message.py` (timezone fix)
+- `backend/app/schemas/post.py` (timezone fix)
+- `backend/app/schemas/user.py` (timezone fix)
+
+**Frontend:**
+- `frontend/js/api.js` (added checkEmail, comment methods)
+- `frontend/js/navigation.js` (professional sign-out modal)
+- `frontend/pages/dashboard.html` (comments UI, auto-refresh)
+- `frontend/pages/register.html` (email validation, layout changes)
+- `frontend/pages/index.html` (larger label font)
+- `frontend/pages/login.html` (larger label font)
+- `frontend/pages/contact.html` (larger label font)
+- `frontend/pages/forgot-password.html` (larger label font)
+- `frontend/pages/reset-password.html` (larger label font)
+
+**Total: 13 files modified**
+
+---
+
+## 📋 REMAINING TASKS - Option 2: Polished Launch (3-4 Weeks)
+
+### Week 2 - Critical Features (Starting Tomorrow)
+
+#### 1. Profile Picture Upload System ⏳
+**Priority: HIGH**
+- [ ] Add file upload endpoint to backend
+  - `POST /api/users/me/profile-picture`
+  - File validation (size, type: jpg/png/gif)
+  - Image resizing/optimization (thumbnail + full size)
+- [ ] Choose storage solution:
+  - Option A: Local filesystem (simple, for MVP)
+  - Option B: Cloud storage (S3, Cloudflare R2)
+- [ ] Update user model schema
+  - `profile_picture_url` field (already exists, just needs backend)
+- [ ] Frontend upload UI
+  - Add upload button to profile page
+  - Image preview before upload
+  - Replace avatar initials with actual photos
+- [ ] Display profile pictures everywhere:
+  - Dashboard posts
+  - Comments
+  - Messages widget
+  - Friends list
+  - User profiles
+
+#### 2. Email Verification System ⏳
+**Priority: HIGH**
+- [ ] Backend implementation
+  - Generate verification token on registration
+  - Send verification email with link
+  - `GET /api/auth/verify-email?token=...` endpoint
+  - Update `email_verified` flag in database
+  - Optionally restrict features until verified
+- [ ] Frontend pages
+  - "Please verify your email" banner/page
+  - Resend verification email option
+  - Success page after verification
+- [ ] Email template
+  - Professional HTML email design
+  - "Verify Your Email" button with token link
+
+#### 3. Production Database Setup ⏳
+**Priority: CRITICAL**
+- [ ] Install PostgreSQL locally
+- [ ] Convert SQLite schema to PostgreSQL
+  - Adjust data types if needed
+  - Test all triggers work in PostgreSQL
+- [ ] Update backend config
+  - Change `DATABASE_URL` in `.env`
+  - Install `psycopg2` package
+- [ ] Test all endpoints with PostgreSQL
+- [ ] Set up database backups strategy
+
+#### 4. Security Enhancements ⏳
+**Priority: HIGH**
+
+**Rate Limiting:**
+- [ ] Install `slowapi` or similar
+- [ ] Add rate limits to endpoints:
+  - Login: 5 attempts per 15 minutes
+  - Register: 3 attempts per hour
+  - Password reset: 3 requests per hour
+  - API calls: 100 requests per minute per user
+
+**Input Sanitization:**
+- [ ] Install `bleach` library
+- [ ] Sanitize user input for XSS:
+  - Post content
+  - Comments
+  - Bio
+  - Messages
+- [ ] Add content security policy (CSP) headers
+
+**HTTPS & Production Config:**
+- [ ] Set up SSL certificate (Let's Encrypt)
+- [ ] Configure reverse proxy (Nginx)
+- [ ] Update CORS for production domain
+- [ ] Disable debug mode
+- [ ] Set strong SECRET_KEY
+
+#### 5. Error Pages & Better UX ⏳
+**Priority: MEDIUM**
+- [ ] Create custom 404 page (`frontend/pages/404.html`)
+- [ ] Create custom 500 error page (`frontend/pages/500.html`)
+- [ ] Add loading spinners to all async operations
+- [ ] Improve error messages (user-friendly, not technical)
+- [ ] Add success/info toast notifications consistently
+
+### Week 3 - Polish & Testing
+
+#### 6. Mobile Testing & Responsive Design ⏳
+**Priority: HIGH**
+- [ ] Test all pages on mobile devices (iOS, Android)
+- [ ] Test all pages on tablets
+- [ ] Fix any layout issues
+- [ ] Test touch interactions
+- [ ] Optimize images for mobile (lazy loading)
+
+#### 7. Analytics & Monitoring ⏳
+**Priority: MEDIUM**
+- [ ] Add Google Analytics or Plausible
+- [ ] Track key metrics:
+  - User registrations
+  - Daily active users
+  - Posts created
+  - Messages sent
+  - Feature usage
+- [ ] Set up error tracking (Sentry or similar)
+- [ ] Add health check monitoring
+
+#### 8. Performance Optimization ⏳
+**Priority: MEDIUM**
+- [ ] Enable gzip compression
+- [ ] Optimize images (WebP format)
+- [ ] Minify CSS/JS for production
+- [ ] Add CDN for static assets
+- [ ] Database query optimization
+- [ ] Add database connection pooling
+
+#### 9. SEO Basics ⏳
+**Priority: LOW**
+- [ ] Add meta tags to all pages (title, description, og:image)
+- [ ] Create `sitemap.xml`
+- [ ] Create `robots.txt`
+- [ ] Add structured data (Schema.org)
+- [ ] Optimize page titles and descriptions
+
+#### 10. Final Testing & Bug Fixes ⏳
+**Priority: CRITICAL**
+- [ ] End-to-end testing:
+  - [ ] Register → Login → Create post → Logout
+  - [ ] Find birthday twins → Add friend → Send message
+  - [ ] Password reset flow
+  - [ ] Email verification flow
+  - [ ] Like posts, add comments
+  - [ ] Edit/delete own posts and comments
+  - [ ] Upload profile picture
+- [ ] Cross-browser testing (Chrome, Firefox, Safari, Edge)
+- [ ] Load testing with multiple concurrent users
+- [ ] Security audit checklist
+- [ ] Fix all discovered bugs
+
+### Week 4 - Deployment Preparation
+
+#### 11. Deployment Setup ⏳
+**Priority: CRITICAL**
+- [ ] Choose hosting provider (AWS, DigitalOcean, Heroku, Render)
+- [ ] Set up production server
+- [ ] Configure environment variables
+- [ ] Set up PostgreSQL database
+- [ ] Configure domain name & DNS
+- [ ] Set up SSL certificate
+- [ ] Configure email service (SendGrid, Mailgun, or Gmail)
+- [ ] Set up automated backups
+- [ ] Create deployment scripts
+
+#### 12. Documentation ⏳
+**Priority: MEDIUM**
+- [ ] Update README.md with:
+  - [ ] Production setup instructions
+  - [ ] Environment variables documentation
+  - [ ] Deployment guide
+  - [ ] Troubleshooting guide
+- [ ] Create user guide/FAQ
+- [ ] Document API endpoints (if needed for future)
+
+### Nice-to-Have Features (Post-Launch)
+- [ ] Notifications system (in-app + email)
+- [ ] Search users by name/location
+- [ ] Block/report users
+- [ ] Post visibility controls (public/friends/twins)
+- [ ] Comment replies (threaded comments)
+- [ ] Like comments
+- [ ] Share posts
+- [ ] Edit profile visibility settings
+- [ ] Birthday reminders
+- [ ] User badges/achievements
+
+---
+
+## 📊 Current Progress: ~40% Complete
+
+**MVP Core Features:**
+- ✅ Authentication (register, login, logout, password reset)
+- ✅ User profiles
+- ✅ Posts (create, edit, delete, like)
+- ✅ Comments (create, delete, view)
+- ✅ Friends system
+- ✅ Direct messaging
+- ✅ Birthday twin matching
+- ✅ Auto-refresh (messages, posts, comments)
+- ✅ Security (JWT, inactivity logout)
+- ✅ Email system (contact form, password reset)
+
+**Remaining for Launch:**
+- ⏳ Profile pictures
+- ⏳ Email verification
+- ⏳ PostgreSQL migration
+- ⏳ Rate limiting & security hardening
+- ⏳ Production deployment
+- ⏳ Testing & bug fixes
+
+---
+
+## 💡 How to Resume Tomorrow (Day 9)
+
+### Quick Start:
+1. **Review this file** - Check what was completed today
+2. **Git status** - See modified files
+3. **Test today's changes:**
+   - Sign out modal
+   - Email validation on register
+   - Comments feature (add, delete, auto-refresh)
+   - Like button (should increment by 1)
+   - Timezone display (should show local time)
+
+### Tomorrow's Focus:
+**Option 1: Profile Picture Upload** (Recommended - high user value)
+- Start with backend endpoint
+- Add frontend upload UI
+- Test with multiple image formats
+
+**Option 2: Email Verification** (Recommended - important for security)
+- Backend token generation
+- Email template
+- Verification endpoint
+
+**Option 3: PostgreSQL Migration** (Recommended - required for production)
+- Install PostgreSQL
+- Migrate schema
+- Test all features
+
+Choose based on priority! All three are important for launch.
+
+---
+
+Last Updated: 2025-12-11 (End of Day 8)
