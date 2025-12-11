@@ -378,7 +378,8 @@
                     },
                     posts: [],
                     myFriends: [],
-                    recentMessages: []
+                    recentMessages: [],
+                    messageRefreshInterval: null
                 };
             },
             computed: {
@@ -404,6 +405,13 @@
 
                 // Load dashboard data
                 await this.loadDashboardData();
+
+                // Start auto-refresh for messages (every 30 seconds)
+                this.startMessageRefresh();
+            },
+            unmounted() {
+                // Clean up interval when component is destroyed
+                this.stopMessageRefresh();
             },
             methods: {
                 async loadDashboardData() {
@@ -676,6 +684,33 @@
                         month: 'long',
                         day: 'numeric'
                     });
+                },
+                startMessageRefresh() {
+                    // Refresh messages every 30 seconds
+                    this.messageRefreshInterval = setInterval(async () => {
+                        try {
+                            const previousUnreadCount = this.stats.messages;
+
+                            // Reload messages
+                            await this.loadMessages();
+
+                            // Show notification if new messages arrived
+                            if (this.stats.messages > previousUnreadCount) {
+                                const newCount = this.stats.messages - previousUnreadCount;
+                                if (typeof showToast !== 'undefined') {
+                                    showToast(`You have ${newCount} new message${newCount > 1 ? 's' : ''}!`, 'info');
+                                }
+                            }
+                        } catch (error) {
+                            console.error('Error refreshing messages:', error);
+                        }
+                    }, 30000); // 30 seconds
+                },
+                stopMessageRefresh() {
+                    if (this.messageRefreshInterval) {
+                        clearInterval(this.messageRefreshInterval);
+                        this.messageRefreshInterval = null;
+                    }
                 }
             }
         }).mount('#app');

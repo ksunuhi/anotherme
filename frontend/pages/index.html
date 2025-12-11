@@ -1,319 +1,513 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AnotherMe - Connect with Your Birthday Twin</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#6366F1',
-                        'primary-dark': '#4F46E5',
-                        'primary-light': '#A5B4FC',
-                        'accent-purple': '#A855F7',
-                        'accent-teal': '#14B8A6',
-                    }
-                }
-            }
-        }
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#6366F1",
+              "primary-dark": "#4F46E5",
+              "primary-light": "#A5B4FC",
+              "accent-purple": "#A855F7",
+              "accent-teal": "#14B8A6",
+            },
+          },
+        },
+      };
     </script>
     <style>
-        /* Custom animations */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+      /* Custom animations */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
         }
-        .fade-in {
-            animation: fadeIn 0.8s ease-out;
+        to {
+          opacity: 1;
+          transform: translateY(0);
         }
+      }
+      .fade-in {
+        animation: fadeIn 0.8s ease-out;
+      }
     </style>
-</head>
-<body class="bg-gray-50 text-gray-900">
-
+  </head>
+  <body class="bg-gray-50 text-gray-900">
     <!-- Header / Navigation -->
     <div id="app-header"></div>
 
     <!-- Hero Section -->
-    <section id="home" class="pt-32 pb-20 px-6 bg-gradient-to-br from-primary-light/20 via-white to-accent-purple/10">
-        <div class="container mx-auto max-w-6xl">
-            <div class="grid md:grid-cols-2 gap-12 items-center">
-                <!-- Hero Text -->
-                <div class="fade-in">
-                    <h1 class="text-5xl md:text-6xl font-bold text-gray-900 leading-tight mb-6">
-                        Meet Your <span class="text-primary">Birthday Twin</span>
-                    </h1>
-                    <p class="text-xl text-gray-600 mb-8 leading-relaxed">
-                        Connect with people born on the exact same day as you. Share your stories, experiences, and discover the unique bond of shared birthdays.
-                    </p>
-                    <div class="flex flex-col sm:flex-row gap-4">
-                        <a href="register.html" class="bg-primary hover:bg-primary-dark text-white px-8 py-4 rounded-lg transition font-semibold text-center text-lg shadow-lg hover:shadow-xl">
-                            Get Started
-                        </a>
-                        <a href="#how-it-works" class="bg-white hover:bg-gray-50 text-primary border-2 border-primary px-8 py-4 rounded-lg transition font-semibold text-center text-lg">
-                            Learn More
-                        </a>
-                    </div>
-                    <p class="text-sm text-gray-500 mt-6">
-                        ✓ Free to join  ✓ Find your community today
-                    </p>
-                </div>
-
-                <!-- Birthday Search Widget -->
-                <div class="hidden md:block">
-                    <div id="birthdaySearchWidget" class="bg-white rounded-2xl shadow-2xl p-8 border border-gray-100">
-                        <h3 class="text-2xl font-bold text-gray-900 mb-4 text-center">🎂 Find Your Birthday Twins</h3>
-
-                        <!-- Birthday Input -->
-                        <div class="mb-6">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Enter Your Birthday</label>
-                            <input
-                                type="date"
-                                id="birthdayInput"
-                                lang="en"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
-                                placeholder="YYYY-MM-DD"
-                            >
-                            <button
-                                id="searchButton"
-                                class="w-full mt-3 bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded-lg transition font-semibold"
-                            >
-                                Search
-                            </button>
-                        </div>
-
-                        <!-- Results Count -->
-                        <div id="resultsCount" class="hidden text-center mb-4">
-                            <p class="text-lg font-semibold text-primary">
-                                ✨ <span id="countNumber">0</span> birthday twins found!
-                            </p>
-                        </div>
-
-                        <!-- User Cards -->
-                        <div id="userCards" class="space-y-4">
-                            <!-- Will be populated dynamically -->
-                        </div>
-
-                        <!-- Sign up prompt (shown when search results exist) -->
-                        <div id="signupPrompt" class="hidden mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg text-center">
-                            <p class="text-sm text-blue-800 mb-2">Want to connect with them?</p>
-                            <a href="register.html" class="inline-block bg-primary hover:bg-primary-dark text-white px-6 py-2 rounded-lg transition font-semibold text-sm">
-                                Sign Up Free
-                            </a>
-                        </div>
-                    </div>
-                </div>
+    <section
+      id="home"
+      class="pt-32 pb-20 px-6 bg-gradient-to-br from-primary-light/20 via-white to-accent-purple/10"
+    >
+      <div class="container mx-auto max-w-6xl">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+          <!-- Hero Text -->
+          <div class="fade-in">
+            <h1
+              class="text-5xl md:text-6xl font-bold text-gray-900 leading-tight mb-6"
+            >
+              Meet Your <span class="text-primary">Birthday Twin</span>
+            </h1>
+            <p class="text-xl text-gray-600 mb-8 leading-relaxed">
+              Connect with people born on the exact same day as you. Share your
+              stories, experiences, and discover the unique bond of shared
+              birthdays.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4">
+              <a
+                href="register.html"
+                class="bg-primary hover:bg-primary-dark text-white px-8 py-4 rounded-lg transition font-semibold text-center text-lg shadow-lg hover:shadow-xl"
+              >
+                Get Started
+              </a>
+              <a
+                href="#how-it-works"
+                class="bg-white hover:bg-gray-50 text-primary border-2 border-primary px-8 py-4 rounded-lg transition font-semibold text-center text-lg"
+              >
+                Learn More
+              </a>
             </div>
+            <p class="text-sm text-gray-500 mt-6">
+              ✓ Free to join ✓ Find your community today
+            </p>
+          </div>
+
+          <!-- Birthday Search Widget -->
+          <div class="hidden md:block">
+            <div
+              id="birthdaySearchWidget"
+              class="bg-white rounded-2xl shadow-2xl p-8 border border-gray-100"
+            >
+              <h3 class="text-2xl font-bold text-gray-900 mb-4 text-center">
+                🎂 Find Your Birthday Twins
+              </h3>
+
+              <!-- Birthday Input -->
+              <div class="mb-6">
+                <label class="block text-base font-medium text-gray-700 mb-2"
+                  >Enter Your Birthday</label
+                >
+                <input
+                  type="date"
+                  id="birthdayInput"
+                  lang="en"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                  placeholder="YYYY-MM-DD"
+                />
+                <button
+                  id="searchButton"
+                  class="w-full mt-3 bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded-lg transition font-semibold"
+                >
+                  Search
+                </button>
+              </div>
+
+              <!-- Results Count -->
+              <div id="resultsCount" class="hidden text-center mb-4">
+                <p class="text-lg font-semibold text-primary">
+                  ✨ <span id="countNumber">0</span> birthday twins found!
+                </p>
+              </div>
+
+              <!-- User Cards -->
+              <div id="userCards" class="space-y-4">
+                <!-- Will be populated dynamically -->
+              </div>
+
+              <!-- Sign up prompt (shown when search results exist) -->
+              <div
+                id="signupPrompt"
+                class="hidden mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg text-center"
+              >
+                <p class="text-sm text-blue-800 mb-2">
+                  Want to connect with them?
+                </p>
+                <a
+                  href="register.html"
+                  class="inline-block bg-primary hover:bg-primary-dark text-white px-6 py-2 rounded-lg transition font-semibold text-sm"
+                >
+                  Sign Up
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
     </section>
 
     <!-- About Section -->
     <section id="about" class="py-20 px-6 bg-white">
-        <div class="container mx-auto max-w-4xl text-center">
-            <h2 class="text-4xl font-bold text-gray-900 mb-6">Why AnotherMe?</h2>
-            <p class="text-xl text-gray-600 leading-relaxed mb-8">
-                We believe that sharing the same birthdate creates a unique connection. AnotherMe is a community platform designed for adults to connect, share life stories, and build meaningful relationships with people born on the exact same day.
-            </p>
-            <p class="text-lg text-gray-600 leading-relaxed">
-                Whether you're curious about how someone else experienced the same era, want to share milestones, or simply connect with kindred spirits, AnotherMe makes it easy and meaningful.
-            </p>
-        </div>
+      <div class="container mx-auto max-w-4xl text-center">
+        <h2 class="text-4xl font-bold text-gray-900 mb-6">Why AnotherMe?</h2>
+        <p class="text-xl text-gray-600 leading-relaxed mb-8">
+          We believe that sharing the same birthdate creates a unique
+          connection. AnotherMe is a community platform designed for adults to
+          connect, share life stories, and build meaningful relationships with
+          people born on the exact same day.
+        </p>
+        <p class="text-lg text-gray-600 leading-relaxed">
+          Whether you're curious about how someone else experienced the same
+          era, want to share milestones, or simply connect with kindred spirits,
+          AnotherMe makes it easy and meaningful.
+        </p>
+      </div>
     </section>
 
     <!-- Statistics Dashboard Section -->
-    <section id="statistics" class="py-20 px-6 bg-gradient-to-br from-primary/5 to-accent-purple/5">
-        <div class="container mx-auto max-w-6xl">
-            <div class="text-center mb-12">
-                <h2 class="text-4xl font-bold text-gray-900 mb-4">📊 Our Growing Community</h2>
-                <p class="text-xl text-gray-600">Join thousands of people connecting through shared birthdays</p>
-            </div>
-
-            <div id="statsContainer">
-                <!-- Loading State -->
-                <div id="statsLoading" class="text-center py-12">
-                    <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-                    <p class="mt-4 text-gray-600">Loading statistics...</p>
-                </div>
-
-                <!-- Stats Grid -->
-                <div id="statsGrid" class="hidden grid md:grid-cols-3 gap-8 mb-12">
-                    <!-- Total Members -->
-                    <div class="bg-white p-8 rounded-xl shadow-sm text-center border border-gray-100">
-                        <div class="text-5xl font-bold text-primary mb-2" id="totalMembers">0</div>
-                        <div class="text-gray-600 font-medium">Total Members</div>
-                    </div>
-
-                    <!-- Unique Birthdates -->
-                    <div class="bg-white p-8 rounded-xl shadow-sm text-center border border-gray-100">
-                        <div class="text-5xl font-bold text-accent-purple mb-2" id="uniqueBirthdates">0</div>
-                        <div class="text-gray-600 font-medium">Unique Birthdates</div>
-                    </div>
-
-                    <!-- Recent Signups -->
-                    <div class="bg-white p-8 rounded-xl shadow-sm text-center border border-gray-100">
-                        <div class="text-5xl font-bold text-accent-teal mb-2" id="recentSignups">0</div>
-                        <div class="text-gray-600 font-medium">New Members (7 days)</div>
-                    </div>
-                </div>
-
-                <!-- Top Birthdates -->
-                <div id="topBirthdates" class="hidden bg-white rounded-xl shadow-sm p-8 border border-gray-100">
-                    <h3 class="text-2xl font-bold text-gray-900 mb-6 text-center">🏆 Most Popular Birthdates</h3>
-                    <div id="topBirthdatesList" class="space-y-4 max-w-2xl mx-auto">
-                        <!-- Will be populated dynamically -->
-                    </div>
-                </div>
-            </div>
+    <section
+      id="statistics"
+      class="py-20 px-6 bg-gradient-to-br from-primary/5 to-accent-purple/5"
+    >
+      <div class="container mx-auto max-w-6xl">
+        <div class="text-center mb-12">
+          <h2 class="text-4xl font-bold text-gray-900 mb-4">
+            📊 Our Growing Community
+          </h2>
+          <p class="text-xl text-gray-600">
+            Join thousands of people connecting through shared birthdays
+          </p>
         </div>
+
+        <div id="statsContainer">
+          <!-- Loading State -->
+          <div id="statsLoading" class="text-center py-12">
+            <div
+              class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"
+            ></div>
+            <p class="mt-4 text-gray-600">Loading statistics...</p>
+          </div>
+
+          <!-- Stats Grid -->
+          <div id="statsGrid" class="hidden grid md:grid-cols-3 gap-8 mb-12">
+            <!-- Total Members -->
+            <div
+              class="bg-white p-8 rounded-xl shadow-sm text-center border border-gray-100"
+            >
+              <div
+                class="text-5xl font-bold text-primary mb-2"
+                id="totalMembers"
+              >
+                0
+              </div>
+              <div class="text-gray-600 font-medium">Total Members</div>
+            </div>
+
+            <!-- Unique Birthdates -->
+            <div
+              class="bg-white p-8 rounded-xl shadow-sm text-center border border-gray-100"
+            >
+              <div
+                class="text-5xl font-bold text-accent-purple mb-2"
+                id="uniqueBirthdates"
+              >
+                0
+              </div>
+              <div class="text-gray-600 font-medium">Unique Birthdates</div>
+            </div>
+
+            <!-- Recent Signups -->
+            <div
+              class="bg-white p-8 rounded-xl shadow-sm text-center border border-gray-100"
+            >
+              <div
+                class="text-5xl font-bold text-accent-teal mb-2"
+                id="recentSignups"
+              >
+                0
+              </div>
+              <div class="text-gray-600 font-medium">New Members (7 days)</div>
+            </div>
+          </div>
+
+          <!-- Top Birthdates -->
+          <div
+            id="topBirthdates"
+            class="hidden bg-white rounded-xl shadow-sm p-8 border border-gray-100"
+          >
+            <h3 class="text-2xl font-bold text-gray-900 mb-6 text-center">
+              🏆 Most Popular Birthdates
+            </h3>
+            <div id="topBirthdatesList" class="space-y-4 max-w-2xl mx-auto">
+              <!-- Will be populated dynamically -->
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- Features Section -->
     <section id="features" class="py-20 px-6 bg-gray-50">
-        <div class="container mx-auto max-w-6xl">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold text-gray-900 mb-4">Everything You Need to Connect</h2>
-                <p class="text-xl text-gray-600">Discover, connect, and share with your birthday twins</p>
-            </div>
-
-            <div class="grid md:grid-cols-3 gap-8">
-                <!-- Feature 1 -->
-                <div class="bg-white p-8 rounded-xl shadow-sm hover:shadow-lg transition border border-gray-100">
-                    <div class="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-6">
-                        <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
-                    </div>
-                    <h3 class="text-2xl font-semibold text-gray-900 mb-4">Find Your Matches</h3>
-                    <p class="text-gray-600 leading-relaxed">
-                        Search and discover people born on the exact same date as you. Filter by location, interests, and more to find your perfect birthday twin.
-                    </p>
-                </div>
-
-                <!-- Feature 2 -->
-                <div class="bg-white p-8 rounded-xl shadow-sm hover:shadow-lg transition border border-gray-100">
-                    <div class="w-14 h-14 bg-accent-purple/10 rounded-lg flex items-center justify-center mb-6">
-                        <svg class="w-8 h-8 text-accent-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                        </svg>
-                    </div>
-                    <h3 class="text-2xl font-semibold text-gray-900 mb-4">Build Your Network</h3>
-                    <p class="text-gray-600 leading-relaxed">
-                        Create meaningful connections with one-way friendships. Follow others, share stories, and build a community around your shared birthdate.
-                    </p>
-                </div>
-
-                <!-- Feature 3 -->
-                <div class="bg-white p-8 rounded-xl shadow-sm hover:shadow-lg transition border border-gray-100">
-                    <div class="w-14 h-14 bg-accent-teal/10 rounded-lg flex items-center justify-center mb-6">
-                        <svg class="w-8 h-8 text-accent-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-                        </svg>
-                    </div>
-                    <h3 class="text-2xl font-semibold text-gray-900 mb-4">Share Your Story</h3>
-                    <p class="text-gray-600 leading-relaxed">
-                        Create posts, engage in discussions, and share your life experiences. Connect through messaging with your birthday twins.
-                    </p>
-                </div>
-
-                <!-- Feature 4 -->
-                <div class="bg-white p-8 rounded-xl shadow-sm hover:shadow-lg transition border border-gray-100">
-                    <div class="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-6">
-                        <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"></path>
-                        </svg>
-                    </div>
-                    <h3 class="text-2xl font-semibold text-gray-900 mb-4">Direct Messaging</h3>
-                    <p class="text-gray-600 leading-relaxed">
-                        Connect one-on-one with your birthday twins through our private messaging system. Build deeper connections beyond public posts.
-                    </p>
-                </div>
-
-                <!-- Feature 5 -->
-                <div class="bg-white p-8 rounded-xl shadow-sm hover:shadow-lg transition border border-gray-100">
-                    <div class="w-14 h-14 bg-accent-teal/10 rounded-lg flex items-center justify-center mb-6">
-                        <svg class="w-8 h-8 text-accent-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                        </svg>
-                    </div>
-                    <h3 class="text-2xl font-semibold text-gray-900 mb-4">Privacy Focused</h3>
-                    <p class="text-gray-600 leading-relaxed">
-                        Control your privacy with granular settings. Choose who can see your profile, posts, and personal information.
-                    </p>
-                </div>
-            </div>
+      <div class="container mx-auto max-w-6xl">
+        <div class="text-center mb-16">
+          <h2 class="text-4xl font-bold text-gray-900 mb-4">
+            Everything You Need to Connect
+          </h2>
+          <p class="text-xl text-gray-600">
+            Discover, connect, and share with your birthday twins
+          </p>
         </div>
+
+        <div class="grid md:grid-cols-3 gap-8">
+          <!-- Feature 1 -->
+          <div
+            class="bg-white p-8 rounded-xl shadow-sm hover:shadow-lg transition border border-gray-100"
+          >
+            <div
+              class="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-6"
+            >
+              <svg
+                class="w-8 h-8 text-primary"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                ></path>
+              </svg>
+            </div>
+            <h3 class="text-2xl font-semibold text-gray-900 mb-4">
+              Find Your Matches
+            </h3>
+            <p class="text-gray-600 leading-relaxed">
+              Search and discover people born on the exact same date as you.
+              Filter by location, interests, and more to find your perfect
+              birthday twin.
+            </p>
+          </div>
+
+          <!-- Feature 2 -->
+          <div
+            class="bg-white p-8 rounded-xl shadow-sm hover:shadow-lg transition border border-gray-100"
+          >
+            <div
+              class="w-14 h-14 bg-accent-purple/10 rounded-lg flex items-center justify-center mb-6"
+            >
+              <svg
+                class="w-8 h-8 text-accent-purple"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                ></path>
+              </svg>
+            </div>
+            <h3 class="text-2xl font-semibold text-gray-900 mb-4">
+              Build Your Network
+            </h3>
+            <p class="text-gray-600 leading-relaxed">
+              Create meaningful connections with one-way friendships. Follow
+              others, share stories, and build a community around your shared
+              birthdate.
+            </p>
+          </div>
+
+          <!-- Feature 3 -->
+          <div
+            class="bg-white p-8 rounded-xl shadow-sm hover:shadow-lg transition border border-gray-100"
+          >
+            <div
+              class="w-14 h-14 bg-accent-teal/10 rounded-lg flex items-center justify-center mb-6"
+            >
+              <svg
+                class="w-8 h-8 text-accent-teal"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                ></path>
+              </svg>
+            </div>
+            <h3 class="text-2xl font-semibold text-gray-900 mb-4">
+              Share Your Story
+            </h3>
+            <p class="text-gray-600 leading-relaxed">
+              Create posts, engage in discussions, and share your life
+              experiences. Connect through messaging with your birthday twins.
+            </p>
+          </div>
+
+          <!-- Feature 4 -->
+          <div
+            class="bg-white p-8 rounded-xl shadow-sm hover:shadow-lg transition border border-gray-100"
+          >
+            <div
+              class="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-6"
+            >
+              <svg
+                class="w-8 h-8 text-primary"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"
+                ></path>
+              </svg>
+            </div>
+            <h3 class="text-2xl font-semibold text-gray-900 mb-4">
+              Direct Messaging
+            </h3>
+            <p class="text-gray-600 leading-relaxed">
+              Connect one-on-one with your birthday twins through our private
+              messaging system. Build deeper connections beyond public posts.
+            </p>
+          </div>
+
+          <!-- Feature 5 -->
+          <div
+            class="bg-white p-8 rounded-xl shadow-sm hover:shadow-lg transition border border-gray-100"
+          >
+            <div
+              class="w-14 h-14 bg-accent-teal/10 rounded-lg flex items-center justify-center mb-6"
+            >
+              <svg
+                class="w-8 h-8 text-accent-teal"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                ></path>
+              </svg>
+            </div>
+            <h3 class="text-2xl font-semibold text-gray-900 mb-4">
+              Privacy Focused
+            </h3>
+            <p class="text-gray-600 leading-relaxed">
+              Control your privacy with granular settings. Choose who can see
+              your profile, posts, and personal information.
+            </p>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- How It Works Section -->
     <section id="how-it-works" class="py-20 px-6 bg-white">
-        <div class="container mx-auto max-w-6xl">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold text-gray-900 mb-4">How It Works</h2>
-                <p class="text-xl text-gray-600">Get started in minutes</p>
-            </div>
-
-            <div class="grid md:grid-cols-4 gap-8">
-                <!-- Step 1 -->
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">
-                        1
-                    </div>
-                    <h3 class="text-xl font-semibold text-gray-900 mb-3">Create Account</h3>
-                    <p class="text-gray-600">
-                        Sign up with your email and enter your birthdate. It's free and takes less than a minute.
-                    </p>
-                </div>
-
-                <!-- Step 2 -->
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">
-                        2
-                    </div>
-                    <h3 class="text-xl font-semibold text-gray-900 mb-3">Find Matches</h3>
-                    <p class="text-gray-600">
-                        Discover people born on the exact same date. See your birthday twins instantly.
-                    </p>
-                </div>
-
-                <!-- Step 3 -->
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">
-                        3
-                    </div>
-                    <h3 class="text-xl font-semibold text-gray-900 mb-3">Connect & Share</h3>
-                    <p class="text-gray-600">
-                        Add friends and start sharing your stories with your birthday twins.
-                    </p>
-                </div>
-
-                <!-- Step 4 -->
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">
-                        4
-                    </div>
-                    <h3 class="text-xl font-semibold text-gray-900 mb-3">Build Relationships</h3>
-                    <p class="text-gray-600">
-                        Engage in conversations, share experiences, and build meaningful connections.
-                    </p>
-                </div>
-            </div>
+      <div class="container mx-auto max-w-6xl">
+        <div class="text-center mb-16">
+          <h2 class="text-4xl font-bold text-gray-900 mb-4">How It Works</h2>
+          <p class="text-xl text-gray-600">Get started in minutes</p>
         </div>
+
+        <div class="grid md:grid-cols-4 gap-8">
+          <!-- Step 1 -->
+          <div class="text-center">
+            <div
+              class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6"
+            >
+              1
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-3">
+              Create Account
+            </h3>
+            <p class="text-gray-600">
+              Sign up with your email and enter your birthdate. It's free and
+              takes less than a minute.
+            </p>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="text-center">
+            <div
+              class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6"
+            >
+              2
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-3">
+              Find Matches
+            </h3>
+            <p class="text-gray-600">
+              Discover people born on the exact same date. See your birthday
+              twins instantly.
+            </p>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="text-center">
+            <div
+              class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6"
+            >
+              3
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-3">
+              Connect & Share
+            </h3>
+            <p class="text-gray-600">
+              Add friends and start sharing your stories with your birthday
+              twins.
+            </p>
+          </div>
+
+          <!-- Step 4 -->
+          <div class="text-center">
+            <div
+              class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6"
+            >
+              4
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-3">
+              Build Relationships
+            </h3>
+            <p class="text-gray-600">
+              Engage in conversations, share experiences, and build meaningful
+              connections.
+            </p>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- CTA Section -->
-    <section class="py-20 px-6 bg-gradient-to-br from-primary to-primary-dark text-white">
-        <div class="container mx-auto max-w-4xl text-center">
-            <h2 class="text-4xl md:text-5xl font-bold mb-6">Ready to Meet Your Birthday Twin?</h2>
-            <p class="text-xl mb-8 opacity-90">
-                Join thousands of people connecting through shared birthdays. Your community is waiting.
-            </p>
-            <a href="register.html" class="inline-block bg-white hover:bg-gray-100 text-primary px-10 py-4 rounded-lg transition font-semibold text-lg shadow-xl hover:shadow-2xl">
-                Get Started Free
-            </a>
-            <p class="text-sm mt-6 opacity-75">No credit card required • Free forever</p>
-        </div>
+    <section
+      class="py-20 px-6 bg-gradient-to-br from-primary to-primary-dark text-white"
+    >
+      <div class="container mx-auto max-w-4xl text-center">
+        <h2 class="text-4xl md:text-5xl font-bold mb-6">
+          Ready to Meet Your Birthday Twin?
+        </h2>
+        <p class="text-xl mb-8 opacity-90">
+          Join thousands of people connecting through shared birthdays. Your
+          community is waiting.
+        </p>
+        <a
+          href="register.html"
+          class="inline-block bg-white hover:bg-gray-100 text-primary px-10 py-4 rounded-lg transition font-semibold text-lg shadow-xl hover:shadow-2xl"
+        >
+          Get Started
+        </a>
+        <p class="text-sm mt-6 opacity-75">
+          No credit card required • Free forever
+        </p>
+      </div>
     </section>
 
     <!-- Footer -->
@@ -326,148 +520,166 @@
     <script src="../js/navigation.js"></script>
 
     <script>
-        // Birthday Search Widget
-        document.addEventListener('DOMContentLoaded', async function() {
-            const birthdayInput = document.getElementById('birthdayInput');
-            const searchButton = document.getElementById('searchButton');
-            const userCards = document.getElementById('userCards');
-            const resultsCount = document.getElementById('resultsCount');
-            const countNumber = document.getElementById('countNumber');
-            const signupPrompt = document.getElementById('signupPrompt');
+      // Birthday Search Widget
+      document.addEventListener("DOMContentLoaded", async function () {
+        const birthdayInput = document.getElementById("birthdayInput");
+        const searchButton = document.getElementById("searchButton");
+        const userCards = document.getElementById("userCards");
+        const resultsCount = document.getElementById("resultsCount");
+        const countNumber = document.getElementById("countNumber");
+        const signupPrompt = document.getElementById("signupPrompt");
 
-            // Load recent users by default
-            await loadRecentUsers();
+        // Load recent users by default
+        await loadRecentUsers();
 
-            // Search button click handler
-            searchButton.addEventListener('click', async function() {
-                const birthday = birthdayInput.value;
-                if (!birthday) {
-                    alert('Please enter your birthday');
-                    return;
-                }
+        // Search button click handler
+        searchButton.addEventListener("click", async function () {
+          const birthday = birthdayInput.value;
+          if (!birthday) {
+            alert("Please enter your birthday");
+            return;
+          }
 
-                await searchByBirthday(birthday);
-            });
+          await searchByBirthday(birthday);
+        });
 
-            // Allow Enter key to search
-            birthdayInput.addEventListener('keypress', async function(e) {
-                if (e.key === 'Enter') {
-                    searchButton.click();
-                }
-            });
+        // Allow Enter key to search
+        birthdayInput.addEventListener("keypress", async function (e) {
+          if (e.key === "Enter") {
+            searchButton.click();
+          }
+        });
 
-            async function loadRecentUsers() {
-                try {
-                    const users = await api.public.getRecentUsers(3);
-                    displayUsers(users);
-                    resultsCount.classList.add('hidden');
-                    signupPrompt.classList.add('hidden');
-                } catch (error) {
-                    console.error('Error loading recent users:', error);
-                    userCards.innerHTML = '<p class="text-center text-gray-500">No users found</p>';
-                }
+        async function loadRecentUsers() {
+          try {
+            const users = await api.public.getRecentUsers(3);
+            displayUsers(users);
+            resultsCount.classList.add("hidden");
+            signupPrompt.classList.add("hidden");
+          } catch (error) {
+            console.error("Error loading recent users:", error);
+            userCards.innerHTML =
+              '<p class="text-center text-gray-500">No users found</p>';
+          }
+        }
+
+        async function searchByBirthday(dateStr) {
+          try {
+            // Get count
+            const countData = await api.public.getBirthdayCount(dateStr);
+            const count = countData.count;
+
+            // Get users (limited to 3)
+            const users = await api.public.searchByBirthday(dateStr);
+
+            // Display count
+            countNumber.textContent = count;
+            resultsCount.classList.remove("hidden");
+
+            // Display users
+            if (users.length > 0) {
+              displayUsers(users);
+              signupPrompt.classList.remove("hidden");
+            } else {
+              userCards.innerHTML =
+                '<p class="text-center text-gray-500 py-8">No users found with this birthday yet. Be the first to join!</p>';
+              signupPrompt.classList.add("hidden");
             }
+          } catch (error) {
+            console.error("Error searching:", error);
+            userCards.innerHTML =
+              '<p class="text-center text-red-500">Error searching. Please try again.</p>';
+          }
+        }
 
-            async function searchByBirthday(dateStr) {
-                try {
-                    // Get count
-                    const countData = await api.public.getBirthdayCount(dateStr);
-                    const count = countData.count;
+        function displayUsers(users) {
+          if (!users || users.length === 0) {
+            userCards.innerHTML =
+              '<p class="text-center text-gray-500 py-8">No users to display</p>';
+            return;
+          }
 
-                    // Get users (limited to 3)
-                    const users = await api.public.searchByBirthday(dateStr);
+          userCards.innerHTML = users
+            .map((user) => {
+              const initials = user.full_name
+                .split(" ")
+                .map((n) => n[0])
+                .join("")
+                .toUpperCase()
+                .substring(0, 2);
 
-                    // Display count
-                    countNumber.textContent = count;
-                    resultsCount.classList.remove('hidden');
+              const birthDate = user.birth_date
+                ? new Date(user.birth_date).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })
+                : "Birthday not set";
 
-                    // Display users
-                    if (users.length > 0) {
-                        displayUsers(users);
-                        signupPrompt.classList.remove('hidden');
-                    } else {
-                        userCards.innerHTML = '<p class="text-center text-gray-500 py-8">No users found with this birthday yet. Be the first to join!</p>';
-                        signupPrompt.classList.add('hidden');
-                    }
-                } catch (error) {
-                    console.error('Error searching:', error);
-                    userCards.innerHTML = '<p class="text-center text-red-500">Error searching. Please try again.</p>';
-                }
-            }
+              const colors = [
+                "bg-primary",
+                "bg-accent-purple",
+                "bg-accent-teal",
+              ];
+              const color = colors[Math.floor(Math.random() * colors.length)];
 
-            function displayUsers(users) {
-                if (!users || users.length === 0) {
-                    userCards.innerHTML = '<p class="text-center text-gray-500 py-8">No users to display</p>';
-                    return;
-                }
-
-                userCards.innerHTML = users.map(user => {
-                    const initials = user.full_name
-                        .split(' ')
-                        .map(n => n[0])
-                        .join('')
-                        .toUpperCase()
-                        .substring(0, 2);
-
-                    const birthDate = user.birth_date ? new Date(user.birth_date).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                    }) : 'Birthday not set';
-
-                    const colors = ['bg-primary', 'bg-accent-purple', 'bg-accent-teal'];
-                    const color = colors[Math.floor(Math.random() * colors.length)];
-
-                    return `
+              return `
                         <div class="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition cursor-pointer"
-                             onclick="window.location.href='user-profile.html?id=${user.id}'">
+                             onclick="window.location.href='user-profile.html?id=${
+                               user.id
+                             }'">
                             <div class="w-12 h-12 ${color} rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0">
                                 ${initials}
                             </div>
                             <div class="flex-1 min-w-0">
-                                <p class="font-semibold text-gray-900 truncate">${user.display_name || user.full_name}</p>
+                                <p class="font-semibold text-gray-900 truncate">${
+                                  user.display_name || user.full_name
+                                }</p>
                                 <p class="text-sm text-gray-600">📅 ${birthDate}</p>
                             </div>
                         </div>
                     `;
-                }).join('');
-            }
+            })
+            .join("");
+        }
 
-            // Statistics Dashboard
-            const statsLoading = document.getElementById('statsLoading');
-            const statsGrid = document.getElementById('statsGrid');
-            const topBirthdates = document.getElementById('topBirthdates');
-            const totalMembersEl = document.getElementById('totalMembers');
-            const uniqueBirthdatesEl = document.getElementById('uniqueBirthdates');
-            const recentSignupsEl = document.getElementById('recentSignups');
-            const topBirthdatesList = document.getElementById('topBirthdatesList');
+        // Statistics Dashboard
+        const statsLoading = document.getElementById("statsLoading");
+        const statsGrid = document.getElementById("statsGrid");
+        const topBirthdates = document.getElementById("topBirthdates");
+        const totalMembersEl = document.getElementById("totalMembers");
+        const uniqueBirthdatesEl = document.getElementById("uniqueBirthdates");
+        const recentSignupsEl = document.getElementById("recentSignups");
+        const topBirthdatesList = document.getElementById("topBirthdatesList");
 
-            try {
-                const stats = await api.public.getStatistics();
+        try {
+          const stats = await api.public.getStatistics();
 
-                // Update stats
-                totalMembersEl.textContent = stats.totalMembers.toLocaleString();
-                uniqueBirthdatesEl.textContent = stats.uniqueBirthdates.toLocaleString();
-                recentSignupsEl.textContent = stats.recentSignups.toLocaleString();
+          // Update stats
+          totalMembersEl.textContent = stats.totalMembers.toLocaleString();
+          uniqueBirthdatesEl.textContent =
+            stats.uniqueBirthdates.toLocaleString();
+          recentSignupsEl.textContent = stats.recentSignups.toLocaleString();
 
-                // Show stats grid
-                statsLoading.classList.add('hidden');
-                statsGrid.classList.remove('hidden');
+          // Show stats grid
+          statsLoading.classList.add("hidden");
+          statsGrid.classList.remove("hidden");
 
-                // Display top birthdates
-                if (stats.topBirthdates && stats.topBirthdates.length > 0) {
-                    topBirthdates.classList.remove('hidden');
+          // Display top birthdates
+          if (stats.topBirthdates && stats.topBirthdates.length > 0) {
+            topBirthdates.classList.remove("hidden");
 
-                    const medals = ['🥇', '🥈', '🥉', '4️⃣', '5️⃣'];
-                    topBirthdatesList.innerHTML = stats.topBirthdates.map((bd, index) => {
-                        const date = new Date(bd.date);
-                        const formattedDate = date.toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric'
-                        });
+            const medals = ["🥇", "🥈", "🥉", "4️⃣", "5️⃣"];
+            topBirthdatesList.innerHTML = stats.topBirthdates
+              .map((bd, index) => {
+                const date = new Date(bd.date);
+                const formattedDate = date.toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                });
 
-                        return `
+                return `
                             <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
                                 <div class="flex items-center gap-4">
                                     <span class="text-3xl">${medals[index]}</span>
@@ -481,14 +693,15 @@
                                 </div>
                             </div>
                         `;
-                    }).join('');
-                }
-            } catch (error) {
-                console.error('Error loading statistics:', error);
-                statsLoading.innerHTML = '<p class="text-red-500">Error loading statistics</p>';
-            }
-        });
+              })
+              .join("");
+          }
+        } catch (error) {
+          console.error("Error loading statistics:", error);
+          statsLoading.innerHTML =
+            '<p class="text-red-500">Error loading statistics</p>';
+        }
+      });
     </script>
-
-</body>
+  </body>
 </html>

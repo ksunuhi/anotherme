@@ -1,7 +1,7 @@
 """
 Post schemas for request/response validation
 """
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_serializer
 from typing import Optional
 from datetime import datetime
 
@@ -44,6 +44,15 @@ class PostResponse(BaseModel):
     updated_at: datetime
     is_liked: bool = False  # Whether current user has liked this post
 
+    @field_serializer('created_at', 'updated_at')
+    def serialize_datetime(self, dt: datetime, _info):
+        """Ensure datetime is serialized as UTC with Z suffix"""
+        if dt.tzinfo is None:
+            # Treat naive datetime as UTC
+            return dt.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
+        # Convert aware datetime to UTC
+        return dt.astimezone().strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
+
     class Config:
         from_attributes = True
 
@@ -65,6 +74,15 @@ class CommentResponse(BaseModel):
     like_count: int
     created_at: datetime
     updated_at: datetime
+
+    @field_serializer('created_at', 'updated_at')
+    def serialize_datetime(self, dt: datetime, _info):
+        """Ensure datetime is serialized as UTC with Z suffix"""
+        if dt.tzinfo is None:
+            # Treat naive datetime as UTC
+            return dt.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
+        # Convert aware datetime to UTC
+        return dt.astimezone().strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
 
     class Config:
         from_attributes = True

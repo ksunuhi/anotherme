@@ -72,7 +72,7 @@
 
                         <!-- Email -->
                         <div class="mb-4">
-                            <label for="email" class="block text-sm font-medium text-gray-700">
+                            <label for="email" class="block text-base font-medium text-gray-700">
                                 Email address
                             </label>
                             <input
@@ -87,7 +87,7 @@
 
                         <!-- Password -->
                         <div class="mb-4">
-                            <label for="password" class="block text-sm font-medium text-gray-700">
+                            <label for="password" class="block text-base font-medium text-gray-700">
                                 Password
                             </label>
                             <input
@@ -111,7 +111,7 @@
 
                         <!-- Confirm Password -->
                         <div class="mb-4">
-                            <label for="confirmPassword" class="block text-sm font-medium text-gray-700">
+                            <label for="confirmPassword" class="block text-base font-medium text-gray-700">
                                 Confirm Password
                             </label>
                             <input
@@ -134,7 +134,7 @@
 
                         <!-- Full Name -->
                         <div class="mb-4">
-                            <label for="fullName" class="block text-sm font-medium text-gray-700">
+                            <label for="fullName" class="block text-base font-medium text-gray-700">
                                 Full Name
                             </label>
                             <input
@@ -149,7 +149,7 @@
 
                         <!-- Birth Date -->
                         <div class="mb-4">
-                            <label for="birthDate" class="block text-sm font-medium text-gray-700">
+                            <label for="birthDate" class="block text-base font-medium text-gray-700">
                                 Birth Date
                             </label>
                             <input
@@ -167,7 +167,7 @@
 
                         <!-- Gender -->
                         <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <label class="block text-base font-medium text-gray-700 mb-2">
                                 Gender
                             </label>
                             <div class="grid grid-cols-2 gap-3">
@@ -193,39 +193,40 @@
                     <div v-show="step === 2">
                         <h3 class="text-lg font-medium text-gray-900 mb-4">Location</h3>
 
-                        <!-- City -->
-                        <div class="mb-4">
-                            <label for="city" class="block text-sm font-medium text-gray-700">
-                                City
-                            </label>
-                            <input
-                                id="city"
-                                v-model="form.city"
-                                type="text"
-                                required
-                                class="mt-1 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                placeholder="San Francisco"
-                            >
-                        </div>
+                        <!-- City & Region (Side by Side) -->
+                        <div class="grid grid-cols-2 gap-3 mb-4">
+                            <div>
+                                <label for="city" class="block text-base font-medium text-gray-700">
+                                    City
+                                </label>
+                                <input
+                                    id="city"
+                                    v-model="form.city"
+                                    type="text"
+                                    required
+                                    class="mt-1 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                    placeholder="San Francisco"
+                                >
+                            </div>
 
-                        <!-- Region/State -->
-                        <div class="mb-4">
-                            <label for="region" class="block text-sm font-medium text-gray-700">
-                                State/Region
-                            </label>
-                            <input
-                                id="region"
-                                v-model="form.region"
-                                type="text"
-                                required
-                                class="mt-1 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                placeholder="California"
-                            >
+                            <div>
+                                <label for="region" class="block text-base font-medium text-gray-700">
+                                    State/Region
+                                </label>
+                                <input
+                                    id="region"
+                                    v-model="form.region"
+                                    type="text"
+                                    required
+                                    class="mt-1 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                    placeholder="California"
+                                >
+                            </div>
                         </div>
 
                         <!-- Country -->
                         <div class="mb-4">
-                            <label for="country" class="block text-sm font-medium text-gray-700">
+                            <label for="country" class="block text-base font-medium text-gray-700">
                                 Country
                             </label>
                             <input
@@ -238,17 +239,17 @@
                             >
                         </div>
 
-                        <!-- Bio (Optional) -->
+                        <!-- Bio (Optional) - More Space -->
                         <div class="mb-4">
-                            <label for="bio" class="block text-sm font-medium text-gray-700">
+                            <label for="bio" class="block text-base font-medium text-gray-700">
                                 Bio (Optional)
                             </label>
                             <textarea
                                 id="bio"
                                 v-model="form.bio"
-                                rows="3"
+                                rows="10"
                                 maxlength="500"
-                                class="mt-1 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                class="mt-1 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm resize-none"
                                 placeholder="Tell us about yourself..."
                             ></textarea>
                             <p class="mt-2 text-xs text-gray-500">
@@ -282,10 +283,17 @@
                             v-if="step < 2"
                             type="button"
                             @click="nextStep"
-                            :disabled="!canProceed"
+                            :disabled="!canProceed || loading"
                             class="inline-flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            Next
+                            <span v-if="!loading || step !== 0">Next</span>
+                            <span v-else class="flex items-center">
+                                <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Checking...
+                            </span>
                         </button>
 
                         <button
@@ -397,8 +405,34 @@
                     const validation = validatePassword(this.form.password);
                     this.passwordErrors = validation.errors;
                 },
-                nextStep() {
-                    if (this.canProceed && this.step < 2) {
+                async nextStep() {
+                    if (!this.canProceed || this.step >= 2) return;
+
+                    // Special handling for step 0: Check email availability
+                    if (this.step === 0) {
+                        this.loading = true;
+                        this.error = null;
+
+                        try {
+                            const response = await api.auth.checkEmail(this.form.email);
+
+                            if (!response.available) {
+                                // Email is already registered - show modal
+                                this.showEmailExistsModal();
+                                this.loading = false;
+                                return;
+                            }
+
+                            // Email is available, proceed to next step
+                            this.step++;
+                            this.loading = false;
+                        } catch (err) {
+                            this.error = 'Unable to verify email. Please try again.';
+                            this.loading = false;
+                            return;
+                        }
+                    } else {
+                        // For other steps, just proceed
                         this.step++;
                     }
                 },
@@ -406,6 +440,70 @@
                     if (this.step > 0) {
                         this.step--;
                     }
+                },
+                showEmailExistsModal() {
+                    // Create modal overlay
+                    const modal = document.createElement('div');
+                    modal.id = 'emailExistsModal';
+                    modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]';
+                    modal.style.animation = 'fadeIn 0.2s ease-in-out';
+
+                    modal.innerHTML = `
+                        <div class="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4" style="animation: slideIn 0.3s ease-out;">
+                            <div class="flex items-center justify-center mb-4">
+                                <div class="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-2 text-center">Email Already Registered</h3>
+                            <p class="text-gray-600 mb-2 text-center">An account with <strong>${this.form.email}</strong> already exists.</p>
+                            <p class="text-gray-600 mb-6 text-center text-sm">Would you like to sign in instead?</p>
+                            <div class="flex flex-col space-y-2">
+                                <button onclick="window.location.href='login.html'" class="w-full px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition">
+                                    Go to Sign In
+                                </button>
+                                <button onclick="closeEmailExistsModal()" class="w-full px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg font-medium transition">
+                                    Use Different Email
+                                </button>
+                            </div>
+                        </div>
+                    `;
+
+                    // Add animations if not already added
+                    if (!document.getElementById('modalAnimations')) {
+                        const style = document.createElement('style');
+                        style.id = 'modalAnimations';
+                        style.textContent = `
+                            @keyframes fadeIn {
+                                from { opacity: 0; }
+                                to { opacity: 1; }
+                            }
+                            @keyframes slideIn {
+                                from { transform: translateY(-20px); opacity: 0; }
+                                to { transform: translateY(0); opacity: 1; }
+                            }
+                        `;
+                        document.head.appendChild(style);
+                    }
+
+                    document.body.appendChild(modal);
+
+                    // Close on background click
+                    modal.addEventListener('click', function(e) {
+                        if (e.target === modal) {
+                            closeEmailExistsModal();
+                        }
+                    });
+
+                    // Make close function global
+                    window.closeEmailExistsModal = function() {
+                        const modal = document.getElementById('emailExistsModal');
+                        if (modal) {
+                            modal.remove();
+                        }
+                    };
                 },
                 async handleSubmit() {
                     if (!this.canProceed) return;

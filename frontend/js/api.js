@@ -50,6 +50,7 @@ async function apiRequest(endpoint, options = {}) {
 const api = {
     // Authentication
     auth: {
+        checkEmail: (email) => apiRequest(`/auth/check-email?email=${encodeURIComponent(email)}`),
         register: (data) => apiRequest('/auth/register', {
             method: 'POST',
             body: JSON.stringify(data),

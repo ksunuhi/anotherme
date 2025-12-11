@@ -60,6 +60,16 @@ async def get_current_user(
     return user
 
 
+@router.get("/check-email")
+async def check_email_availability(email: str, db: Session = Depends(get_db)):
+    """
+    Check if an email is available for registration
+    Returns: {"available": true/false}
+    """
+    existing_user = db.query(User).filter(User.email == email).first()
+    return {"available": existing_user is None, "email": email}
+
+
 @router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 async def register(user_data: UserRegister, db: Session = Depends(get_db)):
     """

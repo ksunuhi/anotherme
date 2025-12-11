@@ -1,7 +1,7 @@
 """
 User schemas (request/response models)
 """
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, field_serializer
 from typing import Optional
 from datetime import date, datetime
 
@@ -44,6 +44,17 @@ class UserResponse(UserBase):
     email_verified: bool
     created_at: datetime
     last_login: Optional[datetime] = None
+
+    @field_serializer('created_at', 'last_login')
+    def serialize_datetime(self, dt: Optional[datetime], _info):
+        """Ensure datetime is serialized as UTC with Z suffix"""
+        if dt is None:
+            return None
+        if dt.tzinfo is None:
+            # Treat naive datetime as UTC
+            return dt.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
+        # Convert aware datetime to UTC
+        return dt.astimezone().strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
 
     class Config:
         from_attributes = True

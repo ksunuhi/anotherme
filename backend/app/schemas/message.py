@@ -1,7 +1,7 @@
 """
 Message schemas for request/response validation
 """
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_serializer
 from typing import Optional
 from datetime import datetime
 
@@ -33,6 +33,15 @@ class MessageResponse(BaseModel):
     created_at: datetime
     sender: Optional[MessageSender] = None
 
+    @field_serializer('created_at')
+    def serialize_datetime(self, dt: datetime, _info):
+        """Ensure datetime is serialized as UTC with Z suffix"""
+        if dt.tzinfo is None:
+            # Treat naive datetime as UTC
+            return dt.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
+        # Convert aware datetime to UTC
+        return dt.astimezone().strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
+
     class Config:
         from_attributes = True
 
@@ -45,3 +54,12 @@ class ConversationResponse(BaseModel):
     last_message: str
     last_message_time: datetime
     unread_count: int
+
+    @field_serializer('last_message_time')
+    def serialize_datetime(self, dt: datetime, _info):
+        """Ensure datetime is serialized as UTC with Z suffix"""
+        if dt.tzinfo is None:
+            # Treat naive datetime as UTC
+            return dt.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
+        # Convert aware datetime to UTC
+        return dt.astimezone().strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
