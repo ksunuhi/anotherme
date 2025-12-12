@@ -90,10 +90,33 @@
                     </div>
 
                     <!-- Error Message -->
-                    <div v-if="error" class="rounded-md bg-red-50 p-4">
+                    <div v-if="error" class="rounded-md p-4" :class="needsVerification ? 'bg-amber-50 border border-amber-200' : 'bg-red-50'">
                         <div class="flex">
-                            <div class="ml-3">
-                                <h3 class="text-sm font-medium text-red-800">{{ error }}</h3>
+                            <div class="flex-shrink-0">
+                                <svg v-if="needsVerification" class="h-5 w-5 text-amber-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <div class="ml-3 flex-1">
+                                <h3 class="text-sm font-medium" :class="needsVerification ? 'text-amber-800' : 'text-red-800'">
+                                    {{ error }}
+                                </h3>
+
+                                <!-- Resend Verification Button -->
+                                <div v-if="needsVerification" class="mt-4">
+                                    <button
+                                        @click="resendVerification"
+                                        :disabled="isResending || resendSuccess"
+                                        class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-amber-700 bg-amber-100 hover:bg-amber-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        <svg v-if="!isResending" class="mr-2 -ml-0.5 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                        </svg>
+                                        <span v-if="!isResending && !resendSuccess">Resend Verification Email</span>
+                                        <span v-else-if="isResending">Sending...</span>
+                                        <span v-else-if="resendSuccess">✓ Email Sent!</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -161,7 +184,10 @@
                         rememberMe: false
                     },
                     loading: false,
-                    error: null
+                    error: null,
+                    needsVerification: false,
+                    isResending: false,
+                    resendSuccess: false
                 };
             },
             mounted() {
@@ -203,8 +229,29 @@
                         }, 1000);
 
                     } catch (err) {
-                        this.error = err.message || 'Login failed. Please check your credentials.';
+                        // Check if error is about email verification
+                        if (err.message && err.message.includes('verify your email')) {
+                            this.needsVerification = true;
+                            this.error = err.message;
+                        } else {
+                            this.needsVerification = false;
+                            this.error = err.message || 'Login failed. Please check your credentials.';
+                        }
                         this.loading = false;
+                    }
+                },
+                async resendVerification() {
+                    this.isResending = true;
+                    this.resendSuccess = false;
+
+                    try {
+                        await api.auth.resendVerification(this.form.email);
+                        this.resendSuccess = true;
+                        showToast('Verification email sent! Please check your inbox.', 'success');
+                    } catch (err) {
+                        showToast('Failed to send verification email. Please try again.', 'error');
+                    } finally {
+                        this.isResending = false;
                     }
                 }
             }

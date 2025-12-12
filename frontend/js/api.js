@@ -64,6 +64,14 @@ const api = {
             localStorage.removeItem('user');
             window.location.href = '/pages/login.html';
         },
+        verifyEmail: (token) => apiRequest('/auth/verify-email', {
+            method: 'POST',
+            body: JSON.stringify({ token }),
+        }),
+        resendVerification: (email) => apiRequest('/auth/resend-verification', {
+            method: 'POST',
+            body: JSON.stringify({ email }),
+        }),
     },
 
     // Users

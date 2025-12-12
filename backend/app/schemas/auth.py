@@ -58,3 +58,25 @@ class ResetPasswordResponse(BaseModel):
     """Reset password response schema"""
     success: bool
     message: str
+
+
+class VerifyEmailRequest(BaseModel):
+    """Email verification request schema"""
+    token: str
+
+
+class VerifyEmailResponse(BaseModel):
+    """Email verification response schema"""
+    success: bool
+    message: str
+
+
+class ResendVerificationRequest(BaseModel):
+    """Resend verification email request schema"""
+    email: EmailStr
+
+
+class ResendVerificationResponse(BaseModel):
+    """Resend verification email response schema"""
+    success: bool
+    message: str

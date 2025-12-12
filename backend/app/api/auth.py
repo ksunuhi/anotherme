@@ -16,13 +16,16 @@ from app.core.security import (
 )
 from app.models.user import User
 from app.models.password_reset import PasswordResetToken
+from app.models.email_verification import EmailVerificationToken
 from app.schemas.auth import (
     UserRegister, UserLogin, Token, TokenData,
     ForgotPasswordRequest, ForgotPasswordResponse,
-    ResetPasswordRequest, ResetPasswordResponse
+    ResetPasswordRequest, ResetPasswordResponse,
+    VerifyEmailRequest, VerifyEmailResponse,
+    ResendVerificationRequest, ResendVerificationResponse
 )
 from app.schemas.user import UserResponse, UserMe
-from app.core.email import send_password_reset_email
+from app.core.email import send_password_reset_email, send_verification_email
 
 router = APIRouter()
 
@@ -120,6 +123,19 @@ async def register(user_data: UserRegister, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_user)
 
+    # Create verification token and send email
+    verification_token = EmailVerificationToken.create_token(new_user.id)
+    db.add(verification_token)
+    db.commit()
+    db.refresh(verification_token)
+
+    # Send verification email
+    send_verification_email(
+        to_email=new_user.email,
+        user_name=new_user.display_name or new_user.full_name,
+        verification_token=verification_token.token
+    )
+
     return new_user
 
 
@@ -144,6 +160,13 @@ async def login(user_data: UserLogin, db: Session = Depends(get_db)):
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect email or password",
             headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    # Check if email is verified
+    if not user.email_verified:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Please verify your email before logging in. Check your inbox for the verification link."
         )
 
     # Update last login
@@ -174,6 +197,13 @@ async def login_form(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect email or password",
             headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    # Check if email is verified
+    if not user.email_verified:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Please verify your email before logging in. Check your inbox for the verification link."
         )
 
     # Update last login
@@ -314,4 +344,117 @@ async def reset_password(request: ResetPasswordRequest, db: Session = Depends(ge
     return ResetPasswordResponse(
         success=True,
         message="Your password has been successfully reset. You can now log in with your new password."
+    )
+
+
+@router.post("/verify-email", response_model=VerifyEmailResponse)
+async def verify_email(request: VerifyEmailRequest, db: Session = Depends(get_db)):
+    """
+    Verify user email using token
+
+    Steps:
+    1. Find token in database
+    2. Validate token (not expired, not used)
+    3. Mark user email as verified
+    4. Mark token as used
+    5. Return success
+
+    Args:
+        request: Contains verification token
+        db: Database session
+
+    Returns:
+        Success message
+
+    Raises:
+        HTTPException: If token is invalid or expired
+    """
+    # Find token
+    verification_token = db.query(EmailVerificationToken).filter(
+        EmailVerificationToken.token == request.token
+    ).first()
+
+    # Validate token exists
+    if not verification_token:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid or expired verification token"
+        )
+
+    # Validate token is still valid (not expired, not used)
+    if not verification_token.is_valid():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="This verification link has expired or already been used"
+        )
+
+    # Get user
+    user = db.query(User).filter(User.id == verification_token.user_id).first()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+
+    # Mark email as verified
+    user.email_verified = True
+
+    # Mark token as used
+    verification_token.mark_as_used()
+
+    db.commit()
+
+    return VerifyEmailResponse(
+        success=True,
+        message="Your email has been successfully verified! You can now access all features."
+    )
+
+
+@router.post("/resend-verification", response_model=ResendVerificationResponse)
+async def resend_verification(request: ResendVerificationRequest, db: Session = Depends(get_db)):
+    """
+    Resend email verification link
+
+    Steps:
+    1. Find user by email
+    2. Check if email is already verified
+    3. Create new verification token
+    4. Send verification email
+    5. Return success message (even if user not found for security)
+
+    Args:
+        request: Contains user email
+        db: Database session
+
+    Returns:
+        Success message
+    """
+    # Find user by email
+    user = db.query(User).filter(User.email == request.email).first()
+
+    # Always return success to prevent email enumeration
+    # But only send email if user exists and is not verified
+    if user:
+        if user.email_verified:
+            return ResendVerificationResponse(
+                success=True,
+                message="If an unverified account exists with this email, a verification link has been sent."
+            )
+
+        # Create new verification token
+        verification_token = EmailVerificationToken.create_token(user.id)
+        db.add(verification_token)
+        db.commit()
+        db.refresh(verification_token)
+
+        # Send verification email
+        send_verification_email(
+            to_email=user.email,
+            user_name=user.display_name or user.full_name,
+            verification_token=verification_token.token
+        )
+
+    return ResendVerificationResponse(
+        success=True,
+        message="If an unverified account exists with this email, a verification link has been sent."
     )

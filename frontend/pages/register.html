@@ -505,6 +505,49 @@
                         }
                     };
                 },
+                showRegistrationSuccessModal() {
+                    // Create modal overlay
+                    const modal = document.createElement('div');
+                    modal.id = 'registrationSuccessModal';
+                    modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]';
+                    modal.style.animation = 'fadeIn 0.2s ease-in-out';
+
+                    modal.innerHTML = `
+                        <div class="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4" style="animation: slideIn 0.3s ease-out;">
+                            <div class="flex items-center justify-center mb-4">
+                                <div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
+                                    <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900 mb-3 text-center">Registration Successful!</h3>
+                            <div class="mb-6 text-center space-y-2">
+                                <p class="text-gray-700">Welcome to AnotherMe! Your account has been created.</p>
+                                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
+                                    <div class="flex items-start">
+                                        <svg class="w-5 h-5 text-blue-500 mt-0.5 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                        </svg>
+                                        <div class="text-left">
+                                            <p class="text-sm font-semibold text-blue-900">Verify Your Email</p>
+                                            <p class="text-sm text-blue-700 mt-1">We've sent a verification link to <strong>${this.form.email}</strong></p>
+                                            <p class="text-xs text-blue-600 mt-2">Please check your inbox and click the verification link to activate your account.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button onclick="window.location.href='login.html'" class="w-full px-4 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition text-base">
+                                Continue to Login
+                            </button>
+                        </div>
+                    `;
+
+                    document.body.appendChild(modal);
+
+                    // Disable loading state
+                    this.loading = false;
+                },
                 async handleSubmit() {
                     if (!this.canProceed) return;
 
@@ -532,23 +575,8 @@
                         // Call registration API
                         const response = await api.auth.register(registrationData);
 
-                        // Show success message
-                        showToast('Account created successfully! Logging you in...', 'success');
-
-                        // Auto-login after registration
-                        const loginResponse = await api.auth.login({
-                            email: this.form.email,
-                            password: this.form.password
-                        });
-
-                        // Save token
-                        localStorage.setItem('token', loginResponse.access_token);
-                        localStorage.setItem('user', JSON.stringify(response));
-
-                        // Redirect to dashboard
-                        setTimeout(() => {
-                            window.location.href = 'dashboard.html';
-                        }, 1500);
+                        // Show success modal with email verification message
+                        this.showRegistrationSuccessModal();
 
                     } catch (err) {
                         this.error = err.message || 'Registration failed. Please try again.';

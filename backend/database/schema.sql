@@ -172,6 +172,23 @@ CREATE INDEX IF NOT EXISTS idx_password_reset_tokens_user_id ON password_reset_t
 CREATE INDEX IF NOT EXISTS idx_password_reset_tokens_token ON password_reset_tokens(token);
 
 -- ============================================
+-- Email Verification Tokens Table
+-- ============================================
+CREATE TABLE IF NOT EXISTS email_verification_tokens (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    token TEXT UNIQUE NOT NULL,
+    expires_at TIMESTAMP NOT NULL,
+    used BOOLEAN DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Indexes for email verification tokens
+CREATE INDEX IF NOT EXISTS idx_email_verification_tokens_user_id ON email_verification_tokens(user_id);
+CREATE INDEX IF NOT EXISTS idx_email_verification_tokens_token ON email_verification_tokens(token);
+
+-- ============================================
 -- Triggers for maintaining counts
 -- ============================================
 

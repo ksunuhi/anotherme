@@ -868,4 +868,244 @@ Choose based on priority! All three are important for launch.
 
 ---
 
-Last Updated: 2025-12-11 (End of Day 8)
+## Day 9 - Email Verification System ✅
+
+**Date:** 2025-12-12
+**Status:** Email verification complete, ready for profile picture upload
+
+### Completed Tasks
+
+#### 1. Email Verification Backend (100%)
+- ✅ **New Model**: `EmailVerificationToken` (`backend/app/models/email_verification.py`)
+  - 24-hour token expiration
+  - One-time use tokens
+  - Secure token generation with `secrets.token_urlsafe(48)`
+
+- ✅ **Email Template**: `send_verification_email()` (`backend/app/core/email.py`)
+  - Professional HTML email with "Welcome to AnotherMe!" message
+  - Verification link with token
+  - Instructions for next steps
+
+- ✅ **API Endpoints**: (`backend/app/api/auth.py`)
+  - `POST /api/auth/verify-email` - Verify email with token
+  - `POST /api/auth/resend-verification` - Resend verification email
+  - Updated `POST /api/auth/register` - Auto-sends verification email on registration
+  - Updated `POST /api/auth/login` - Blocks login until email verified (403 Forbidden)
+  - Updated `POST /api/auth/login/form` - Same verification check for Swagger UI
+
+- ✅ **Database Schema**: Added `email_verification_tokens` table
+  - Same structure as password_reset_tokens
+  - Indexes on user_id and token
+  - Foreign key cascade on user deletion
+
+#### 2. Email Verification Frontend (100%)
+- ✅ **New Page**: `verify-email.html`
+  - Auto-verifies email on page load with token from URL
+  - Shows loading spinner during verification
+  - Success message with "Go to Login" button
+  - Error handling with option to resend verification email
+  - Email input form to resend verification
+
+- ✅ **Updated Registration**: `register.html`
+  - Removed auto-login after registration
+  - Shows success modal with email verification instructions
+  - Displays user's email address in confirmation
+  - "Continue to Login" button instead of auto-redirect
+
+- ✅ **Updated Login**: `login.html`
+  - Detects email verification errors (403 status)
+  - Shows amber warning (instead of red error) for verification issues
+  - "Resend Verification Email" button appears when verification needed
+  - Different styling for verification warnings vs login errors
+  - One-click resend with loading state
+
+- ✅ **API Methods**: `frontend/js/api.js`
+  - `api.auth.verifyEmail(token)` - Verify email endpoint
+  - `api.auth.resendVerification(email)` - Resend verification endpoint
+
+#### 3. Database Migration (100%)
+- ✅ **Groups Removal Migration**
+  - Created `migrate_remove_groups_v2.sql` migration script
+  - Removed `group_id` column from posts table
+  - Removed foreign key constraint to non-existent groups table
+  - Converted 'group' visibility posts to 'friends' visibility
+  - Properly handled triggers during migration
+  - Preserved all existing user and post data
+  - Successfully tested on production-like database with test users
+
+#### 4. Security Improvements (100%)
+- ✅ **Email Verification Required for Login**
+  - Users cannot log in until email is verified
+  - Returns 403 Forbidden with helpful error message
+  - Prevents unauthorized access to the platform
+
+- ✅ **Email Enumeration Prevention**
+  - Resend verification always returns success message
+  - Same response whether email exists or not
+  - Protects user privacy
+
+### Features Now Working
+- ✅ Complete email verification flow (register → verify email → login)
+- ✅ Login blocked until email verified
+- ✅ Resend verification email from login page
+- ✅ Professional email templates with HTML formatting
+- ✅ 24-hour token expiration
+- ✅ One-time use tokens (can't reuse verification link)
+- ✅ Database migration for clean schema (groups removed)
+
+### Files Created/Modified Today
+
+**Backend:**
+- `backend/app/models/email_verification.py` (new)
+- `backend/app/models/__init__.py` (updated - added EmailVerificationToken import)
+- `backend/app/core/email.py` (updated - added send_verification_email function)
+- `backend/app/schemas/auth.py` (updated - added 4 new schemas)
+- `backend/app/api/auth.py` (major updates):
+  - Added email verification check to login endpoints
+  - Added verify-email endpoint
+  - Added resend-verification endpoint
+  - Updated register to send verification email
+- `backend/database/schema.sql` (updated - added email_verification_tokens table)
+- `backend/database/migrate_remove_groups_v2.sql` (new - migration script)
+
+**Frontend:**
+- `frontend/pages/verify-email.html` (new - 168 lines)
+- `frontend/pages/register.html` (updated - added success modal with email instructions)
+- `frontend/pages/login.html` (updated - verification error handling + resend button)
+- `frontend/js/api.js` (updated - added verifyEmail and resendVerification methods)
+
+**Total: 9 files modified, 3 files created**
+
+### Testing Results
+- ✅ Registration sends verification email successfully
+- ✅ Login blocked before verification (403 Forbidden)
+- ✅ Verification link works correctly
+- ✅ Email marked as verified in database
+- ✅ Login works after verification
+- ✅ Resend verification email works from login page
+- ✅ Database migration successful (data preserved)
+- ✅ User deletion works without foreign key errors
+
+### Notes
+- Email verification tokens expire after 24 hours (vs 1 hour for password reset)
+- Tokens are cryptographically secure using `secrets.token_urlsafe(48)`
+- Frontend URL in emails uses `settings.FRONTEND_URL` from .env
+- All email-related functionality requires SMTP configured in .env
+- Migration script backs up database automatically before running
+
+---
+
+## 📋 NEXT STEPS - Day 10
+
+### Priority 1: Profile Picture Upload System ⏳
+**Backend Implementation:**
+- [ ] Create file upload endpoint `POST /api/users/me/profile-picture`
+  - File validation (size: max 5MB, types: jpg/png/gif/webp)
+  - Image resizing/optimization (thumbnail: 150x150, full: 800x800)
+  - Generate unique filename with UUID
+  - Store in local filesystem or cloud (S3/Cloudflare R2)
+- [ ] Update user model response to include profile picture URL
+- [ ] Add delete profile picture endpoint `DELETE /api/users/me/profile-picture`
+
+**Frontend Implementation:**
+- [ ] Add upload button to profile page (`profile.html`)
+  - File input with image preview
+  - Drag-and-drop support (optional)
+  - Upload progress indicator
+  - Crop/resize before upload (optional)
+- [ ] Update avatar display across all pages:
+  - Dashboard (posts, comments, messages widget)
+  - Profile page
+  - User profile page
+  - Friends list
+  - Messages page
+  - Navigation bar
+- [ ] Replace avatar initials with actual profile pictures
+- [ ] Fallback to initials if no profile picture
+
+**Storage Decision:**
+- Option A: Local filesystem (`backend/uploads/profile_pictures/`)
+  - Simple for MVP
+  - No external dependencies
+  - Works with SQLite
+- Option B: Cloud storage (S3, Cloudflare R2)
+  - Better for production
+  - CDN integration
+  - Scalable
+
+**Testing:**
+- [ ] Upload image from profile page
+- [ ] Verify image displays on profile
+- [ ] Verify image displays in posts/comments
+- [ ] Test file size limit (should reject >5MB)
+- [ ] Test file type validation (should reject .exe, .pdf, etc.)
+- [ ] Test image optimization (images should be resized)
+- [ ] Delete profile picture and verify fallback to initials
+
+### Priority 2: PostgreSQL Migration (After Profile Pictures)
+- [ ] Install PostgreSQL locally
+- [ ] Convert schema.sql for PostgreSQL
+- [ ] Update DATABASE_URL in .env
+- [ ] Test all features with PostgreSQL
+
+### Priority 3: Security & Polish
+- [ ] Add rate limiting to API endpoints
+- [ ] Add input sanitization for XSS protection
+- [ ] Mobile responsive testing
+- [ ] Error pages (404, 500)
+
+---
+
+## 📊 Current Progress: ~45% Complete
+
+**Phase 1 MVP - Core Features:**
+- ✅ Authentication (register, login, logout, password reset)
+- ✅ **Email verification (NEW - Day 9)**
+- ✅ User profiles (view, edit)
+- ✅ Posts (create, edit, delete, like)
+- ✅ Comments (create, delete, view)
+- ✅ Friends system (add, remove, view)
+- ✅ Direct messaging (send, read, unread counts)
+- ✅ Birthday twin matching
+- ✅ Auto-refresh (messages, posts, comments every 30s)
+- ✅ Security (JWT 1hr expiration, auto-logout after 30min inactivity)
+- ✅ Contact form
+- ✅ Database cleanup (groups removed)
+
+**Remaining for Launch:**
+- ⏳ Profile pictures (Day 10 - next priority)
+- ⏳ PostgreSQL migration
+- ⏳ Rate limiting & security hardening
+- ⏳ Production deployment
+- ⏳ Testing & bug fixes
+
+---
+
+## 💡 How to Resume Tomorrow (Day 10)
+
+### Quick Start:
+1. **Review this file** - Check Day 9 completion
+2. **Start backend server:**
+   ```bash
+   cd backend
+   uvicorn main:app --reload
+   ```
+3. **Start frontend server:**
+   ```bash
+   cd frontend
+   python -m http.server 8080
+   ```
+
+### Tomorrow's Focus: **Profile Picture Upload**
+
+**Recommended Approach:**
+1. Start with backend file upload endpoint (simplest: local filesystem storage)
+2. Add frontend upload UI to profile page
+3. Update all pages to display profile pictures
+4. Test thoroughly with different image sizes/formats
+
+**Estimated Time:** 2-3 hours
+
+---
+
+Last Updated: 2025-12-12 (End of Day 9)

@@ -230,3 +230,98 @@ This is an automated email from AnotherMe.
         html_content=html_content,
         text_content=text_content
     )
+
+
+def send_verification_email(
+    to_email: str,
+    user_name: str,
+    verification_token: str
+) -> bool:
+    """
+    Send email verification email to user
+
+    Args:
+        to_email: User's email address
+        user_name: User's name
+        verification_token: Email verification token
+
+    Returns:
+        True if sent successfully
+    """
+    verification_link = f"{settings.FRONTEND_URL}/pages/verify-email.html?token={verification_token}"
+
+    html_content = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <style>
+            body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+            .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+            .header {{ background: #6366F1; color: white; padding: 20px; text-align: center; }}
+            .content {{ background: #f9fafb; padding: 30px; margin: 20px 0; border-radius: 8px; }}
+            .button {{ display: inline-block; background: #6366F1; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; margin: 20px 0; }}
+            .footer {{ text-align: center; color: #6b7280; font-size: 12px; margin-top: 20px; }}
+            .info {{ background: #dbeafe; border-left: 4px solid #3b82f6; padding: 12px; margin: 20px 0; }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h2>Welcome to AnotherMe!</h2>
+            </div>
+            <div class="content">
+                <p>Hi {user_name},</p>
+                <p>Thank you for signing up for AnotherMe, the birthday social network! To complete your registration, please verify your email address by clicking the button below:</p>
+                <div style="text-align: center;">
+                    <a href="{verification_link}" class="button">Verify Email Address</a>
+                </div>
+                <p>Or copy and paste this link into your browser:</p>
+                <p style="word-break: break-all; color: #6366F1;">{verification_link}</p>
+                <div class="info">
+                    <strong>ℹ️ What's Next:</strong>
+                    <ul style="margin: 10px 0;">
+                        <li>Click the verification link above</li>
+                        <li>Complete your profile</li>
+                        <li>Find your birthday twins</li>
+                        <li>Start connecting with others!</li>
+                    </ul>
+                </div>
+                <p style="color: #6b7280; font-size: 14px; margin-top: 20px;">This link will expire in 24 hours.</p>
+            </div>
+            <div class="footer">
+                <p>This is an automated email from AnotherMe. Please do not reply.</p>
+                <p>If you didn't create an account, you can safely ignore this email.</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+
+    text_content = f"""
+Welcome to AnotherMe!
+
+Hi {user_name},
+
+Thank you for signing up for AnotherMe, the birthday social network! To complete your registration, please verify your email address by clicking the link below:
+
+{verification_link}
+
+This link will expire in 24 hours.
+
+What's Next:
+- Click the verification link above
+- Complete your profile
+- Find your birthday twins
+- Start connecting with others!
+
+---
+This is an automated email from AnotherMe.
+If you didn't create an account, you can safely ignore this email.
+    """
+
+    return send_email(
+        to_email=to_email,
+        subject="Verify Your AnotherMe Email Address",
+        html_content=html_content,
+        text_content=text_content
+    )
