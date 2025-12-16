@@ -645,7 +645,11 @@
                     } catch (error) {
                         console.error('Error creating post:', error);
                         if (typeof showToast !== 'undefined') {
-                            showToast('Failed to create post: ' + error.message, 'error');
+                            // Show friendly error message
+                            const errorMsg = error.message || 'Failed to create post. Please try again.';
+                            showToast(errorMsg, 'error');
+                        } else {
+                            alert(error.message || 'Failed to create post. Please try again.');
                         }
                     }
                 },
@@ -703,7 +707,11 @@
                     } catch (error) {
                         console.error('Error adding comment:', error);
                         if (typeof showToast !== 'undefined') {
-                            showToast('Failed to add comment: ' + error.message, 'error');
+                            // Show friendly error message
+                            const errorMsg = error.message || 'Failed to add comment. Please try again.';
+                            showToast(errorMsg, 'error');
+                        } else {
+                            alert(error.message || 'Failed to add comment. Please try again.');
                         }
                     }
                 },

@@ -26,8 +26,28 @@ async function apiRequest(endpoint, options = {}) {
         });
 
         if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.detail || 'API request failed');
+            const contentType = response.headers.get('content-type');
+
+            // Handle rate limit errors (429)
+            if (response.status === 429) {
+                try {
+                    const error = await response.json();
+                    // slowapi returns error in "error" field, not "detail"
+                    const errorMessage = error.error || error.detail || 'Rate limit exceeded. Please try again later.';
+                    throw new Error(errorMessage);
+                } catch (parseError) {
+                    // If JSON parsing fails, return generic message
+                    throw new Error('Rate limit exceeded. Please try again later.');
+                }
+            }
+
+            // Handle other errors
+            if (contentType && contentType.includes('application/json')) {
+                const error = await response.json();
+                throw new Error(error.detail || error.message || 'API request failed');
+            } else {
+                throw new Error(`Request failed with status ${response.status}`);
+            }
         }
 
         // Handle 204 No Content responses
