@@ -148,3 +148,27 @@ function validatePassword(password) {
         errors
     };
 }
+
+/**
+ * Render avatar HTML with profile picture or initials
+ * @param {Object} user - User object with profile_picture_url, full_name, and id
+ * @param {string} size - Size class (e.g., 'w-8 h-8', 'w-10 h-10', 'w-12 h-12')
+ * @param {string} extraClasses - Additional CSS classes
+ * @returns {string} HTML string for avatar
+ */
+function renderAvatar(user, size = 'w-10 h-10', extraClasses = '') {
+    if (!user) {
+        return `<div class="${size} rounded-full bg-gray-400 flex items-center justify-center text-white font-semibold ${extraClasses}">??</div>`;
+    }
+
+    if (user.profile_picture_url) {
+        return `<img src="http://localhost:8000/uploads/${user.profile_picture_url}"
+                     alt="${user.full_name || 'User'}"
+                     class="${size} rounded-full object-cover ${extraClasses}" />`;
+    }
+
+    return `<div class="${size} rounded-full flex items-center justify-center text-white font-semibold ${extraClasses}"
+                 style="background-color: ${getAvatarColor(user.id)}">
+                ${getInitials(user.full_name)}
+            </div>`;
+}

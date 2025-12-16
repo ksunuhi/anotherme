@@ -1,11 +1,15 @@
 """
 Users API endpoints
 """
-from fastapi import APIRouter, Depends, HTTPException, status, Query
+from fastapi import APIRouter, Depends, HTTPException, status, Query, UploadFile, File
 from sqlalchemy.orm import Session
 from sqlalchemy import and_, func, desc
 from typing import List, Optional
 from datetime import date
+import os
+import uuid
+from PIL import Image
+import io
 
 from app.core.database import get_db
 from app.api.auth import get_current_user
@@ -16,6 +20,16 @@ from app.models.message import Message
 from app.schemas.user import UserResponse, UserUpdate
 
 router = APIRouter()
+
+# Configuration for file uploads
+UPLOAD_DIR = "uploads/profile_pictures"
+MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
+ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".gif", ".webp"}
+THUMBNAIL_SIZE = (150, 150)
+FULL_SIZE = (800, 800)
+
+# Ensure upload directory exists
+os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 
 # ===== PUBLIC ENDPOINTS (No Auth Required) =====
@@ -228,6 +242,146 @@ async def update_my_profile(
     db.refresh(current_user)
 
     return current_user
+
+
+@router.post("/me/profile-picture")
+async def upload_profile_picture(
+    file: UploadFile = File(...),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Upload profile picture for current user
+    Accepts: jpg, jpeg, png, gif, webp (max 5MB)
+    Generates thumbnail (150x150) and full size (800x800)
+    """
+    # Validate file extension
+    file_ext = os.path.splitext(file.filename)[1].lower()
+    if file_ext not in ALLOWED_EXTENSIONS:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Invalid file type. Allowed: {', '.join(ALLOWED_EXTENSIONS)}"
+        )
+
+    # Read file content
+    file_content = await file.read()
+
+    # Validate file size
+    if len(file_content) > MAX_FILE_SIZE:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"File too large. Maximum size: {MAX_FILE_SIZE / 1024 / 1024}MB"
+        )
+
+    try:
+        # Open image with PIL
+        image = Image.open(io.BytesIO(file_content))
+
+        # Convert RGBA to RGB if necessary (for PNG with transparency)
+        if image.mode in ('RGBA', 'LA', 'P'):
+            # Create white background
+            background = Image.new('RGB', image.size, (255, 255, 255))
+            if image.mode == 'P':
+                image = image.convert('RGBA')
+            background.paste(image, mask=image.split()[-1] if image.mode == 'RGBA' else None)
+            image = background
+
+        # Generate unique filename
+        filename = f"user-{current_user.id}{file_ext}"
+        thumb_filename = f"user-{current_user.id}-thumb{file_ext}"
+
+        # Create thumbnail (150x150, maintain aspect ratio with crop)
+        thumbnail = image.copy()
+        thumbnail.thumbnail(THUMBNAIL_SIZE, Image.Resampling.LANCZOS)
+
+        # Crop to square if needed
+        width, height = thumbnail.size
+        if width != height:
+            min_dim = min(width, height)
+            left = (width - min_dim) // 2
+            top = (height - min_dim) // 2
+            thumbnail = thumbnail.crop((left, top, left + min_dim, top + min_dim))
+            thumbnail = thumbnail.resize(THUMBNAIL_SIZE, Image.Resampling.LANCZOS)
+
+        # Create full size (800x800, maintain aspect ratio)
+        full_image = image.copy()
+        full_image.thumbnail(FULL_SIZE, Image.Resampling.LANCZOS)
+
+        # Delete old profile picture if exists (BEFORE saving new ones)
+        if current_user.profile_picture_url:
+            old_filename = os.path.basename(current_user.profile_picture_url)
+            # Get the old file's name and extension
+            old_name, old_ext = os.path.splitext(old_filename)
+            old_thumb_filename = f"{old_name}-thumb{old_ext}"
+
+            old_path = os.path.join(UPLOAD_DIR, old_filename)
+            old_thumb_path = os.path.join(UPLOAD_DIR, old_thumb_filename)
+
+            if os.path.exists(old_path):
+                os.remove(old_path)
+            if os.path.exists(old_thumb_path):
+                os.remove(old_thumb_path)
+
+        # Save thumbnail (AFTER deleting old files)
+        thumb_path = os.path.join(UPLOAD_DIR, thumb_filename)
+        thumbnail.save(thumb_path, quality=85, optimize=True)
+
+        # Save full size
+        full_path = os.path.join(UPLOAD_DIR, filename)
+        full_image.save(full_path, quality=90, optimize=True)
+
+        # Update user's profile_picture_url
+        current_user.profile_picture_url = f"profile_pictures/{filename}"
+        db.commit()
+        db.refresh(current_user)
+
+        return {
+            "message": "Profile picture uploaded successfully",
+            "profile_picture_url": current_user.profile_picture_url,
+            "thumbnail_url": f"profile_pictures/{thumb_filename}"
+        }
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error processing image: {str(e)}"
+        )
+
+
+@router.delete("/me/profile-picture")
+async def delete_profile_picture(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Delete profile picture for current user
+    """
+    if not current_user.profile_picture_url:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No profile picture to delete"
+        )
+
+    # Get filename from URL
+    filename = os.path.basename(current_user.profile_picture_url)
+    file_ext = os.path.splitext(filename)[1]
+    thumb_filename = filename.replace(file_ext, f"-thumb{file_ext}")
+
+    # Delete files
+    full_path = os.path.join(UPLOAD_DIR, filename)
+    thumb_path = os.path.join(UPLOAD_DIR, thumb_filename)
+
+    if os.path.exists(full_path):
+        os.remove(full_path)
+    if os.path.exists(thumb_path):
+        os.remove(thumb_path)
+
+    # Update database
+    current_user.profile_picture_url = None
+    db.commit()
+    db.refresh(current_user)
+
+    return {"message": "Profile picture deleted successfully"}
 
 
 @router.get("/me/stats")

@@ -52,13 +52,54 @@
               class="flex flex-col sm:flex-row items-start sm:items-end -mt-16 sm:-mt-20 mb-8"
             >
               <!-- Profile Picture -->
-              <div class="relative mb-4 sm:mb-0">
+              <div class="relative mb-4 sm:mb-0 group">
+                <!-- Avatar (image or initials) -->
+                <img
+                  v-if="user?.profile_picture_url"
+                  :src="`http://localhost:8000/uploads/${user.profile_picture_url}?t=${profilePictureTimestamp}`"
+                  :alt="user?.full_name"
+                  class="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover"
+                />
                 <div
+                  v-else
                   class="w-32 h-32 rounded-full border-4 border-white shadow-lg flex items-center justify-center text-white font-bold text-4xl"
                   :style="{ backgroundColor: getAvatarColor(user?.id) }"
                 >
                   {{ getInitials(user?.full_name) }}
                 </div>
+
+                <!-- Delete Button (only shown when profile picture exists) -->
+                <button
+                  v-if="user?.profile_picture_url"
+                  @click="deleteProfilePicture"
+                  class="absolute bottom-0 left-0 w-10 h-10 bg-red-500 hover:bg-red-600 text-white rounded-full shadow-lg flex items-center justify-center transition transform hover:scale-110"
+                  title="Remove profile picture"
+                >
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                  </svg>
+                </button>
+
+                <!-- Upload Button -->
+                <button
+                  @click="openFileUpload"
+                  class="absolute bottom-0 right-0 w-10 h-10 bg-primary hover:bg-primary-dark text-white rounded-full shadow-lg flex items-center justify-center transition transform hover:scale-110"
+                  :title="user?.profile_picture_url ? 'Change profile picture' : 'Upload profile picture'"
+                >
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  </svg>
+                </button>
+
+                <!-- Hidden file input -->
+                <input
+                  ref="fileInput"
+                  type="file"
+                  accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+                  @change="handleFileSelect"
+                  class="hidden"
+                />
               </div>
 
               <!-- User Info & Actions -->
@@ -318,6 +359,52 @@
           </div>
         </div>
       </div>
+
+      <!-- Delete Profile Picture Confirmation Modal -->
+      <div
+        v-if="showDeleteConfirmation"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+        @click.self="showDeleteConfirmation = false"
+      >
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 transform transition-all">
+          <!-- Icon -->
+          <div class="flex justify-center mb-4">
+            <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
+              <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Title -->
+          <h3 class="text-xl font-bold text-gray-900 text-center mb-2">
+            Remove Profile Picture?
+          </h3>
+
+          <!-- Message -->
+          <p class="text-gray-600 text-center mb-6">
+            Are you sure you want to remove your profile picture? Your avatar will revert to your initials.
+          </p>
+
+          <!-- Buttons -->
+          <div class="flex space-x-3">
+            <button
+              @click="showDeleteConfirmation = false"
+              class="flex-1 px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg font-medium transition"
+            >
+              Cancel
+            </button>
+            <button
+              @click="confirmDeleteProfilePicture"
+              :disabled="loading"
+              class="flex-1 px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition disabled:opacity-50"
+            >
+              <span v-if="!loading">Remove</span>
+              <span v-else>Removing...</span>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Footer -->
@@ -337,6 +424,8 @@
           return {
             user: null,
             showEditProfile: false,
+            showDeleteConfirmation: false,
+            profilePictureTimestamp: Date.now(), // For cache-busting
             editForm: {
               full_name: "",
               bio: "",
@@ -426,6 +515,93 @@
             } finally {
               this.loading = false;
             }
+          },
+          openFileUpload() {
+            // Trigger the hidden file input
+            this.$refs.fileInput.click();
+          },
+          async handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // Validate file size (5MB max)
+            const maxSize = 5 * 1024 * 1024;
+            if (file.size > maxSize) {
+              alert("File is too large. Maximum size is 5MB.");
+              return;
+            }
+
+            // Validate file type
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+            if (!allowedTypes.includes(file.type)) {
+              alert("Invalid file type. Please upload a JPG, PNG, GIF, or WEBP image.");
+              return;
+            }
+
+            this.loading = true;
+
+            try {
+              const result = await api.users.uploadProfilePicture(file);
+
+              // Update user data
+              this.user.profile_picture_url = result.profile_picture_url;
+              localStorage.setItem("user", JSON.stringify(this.user));
+
+              // Update timestamp to force image reload (cache-busting)
+              this.profilePictureTimestamp = Date.now();
+
+              // Show success message
+              this.showToast("Profile picture updated successfully!", "success");
+
+              // Clear the file input
+              event.target.value = "";
+            } catch (error) {
+              console.error("Error uploading profile picture:", error);
+              alert(error.message || "Failed to upload profile picture. Please try again.");
+            } finally {
+              this.loading = false;
+            }
+          },
+          deleteProfilePicture() {
+            // Show confirmation modal
+            this.showDeleteConfirmation = true;
+          },
+          async confirmDeleteProfilePicture() {
+            this.loading = true;
+
+            try {
+              await api.users.deleteProfilePicture();
+
+              // Update user data
+              this.user.profile_picture_url = null;
+              localStorage.setItem("user", JSON.stringify(this.user));
+
+              // Update timestamp to force Vue re-render
+              this.profilePictureTimestamp = Date.now();
+
+              // Close modal
+              this.showDeleteConfirmation = false;
+
+              this.showToast("Profile picture removed successfully!", "success");
+            } catch (error) {
+              console.error("Error deleting profile picture:", error);
+              this.showToast(error.message || "Failed to remove profile picture. Please try again.", "error");
+            } finally {
+              this.loading = false;
+            }
+          },
+          showToast(message, type = "success") {
+            // Simple toast notification
+            const toast = document.createElement("div");
+            toast.className = `fixed top-24 right-4 px-6 py-3 rounded-lg shadow-lg text-white z-50 ${
+              type === "success" ? "bg-green-500" : "bg-red-500"
+            }`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+              toast.remove();
+            }, 3000);
           },
           // Utility functions
           getInitials(name) {

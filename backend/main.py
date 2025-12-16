@@ -4,9 +4,11 @@ Main FastAPI application entry point
 """
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from app.core.config import settings
 from app.core.database import engine, Base
 from app.api import auth, posts, users, friends, messages, contact, statistics
+import os
 
 # Create database tables (only needed if not using schema.sql)
 # Base.metadata.create_all(bind=engine)
@@ -53,6 +55,11 @@ app.include_router(friends.router, prefix="/api/friends", tags=["Friends"])
 app.include_router(messages.router, prefix="/api/messages", tags=["Messages"])
 app.include_router(contact.router, prefix="/api/contact", tags=["Contact"])
 app.include_router(statistics.router, prefix="/api/statistics", tags=["Statistics"])
+
+# Mount static files for uploads (profile pictures)
+# Ensure uploads directory exists
+os.makedirs("uploads/profile_pictures", exist_ok=True)
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 # Additional routers to be added:
 # app.include_router(groups.router, prefix="/api/groups", tags=["Groups"])

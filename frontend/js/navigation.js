@@ -43,9 +43,15 @@ function renderHeader() {
                         <!-- User Menu -->
                         <div class="relative" id="userMenuContainer">
                             <button onclick="toggleUserMenu()" class="flex items-center space-x-2 text-gray-700 hover:text-primary transition">
-                                <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-semibold">
-                                    ${currentUser ? getInitials(currentUser.full_name) : 'U'}
-                                </div>
+                                ${currentUser && currentUser.profile_picture_url ? `
+                                    <img src="http://localhost:8000/uploads/${currentUser.profile_picture_url}"
+                                         alt="${currentUser.full_name}"
+                                         class="w-8 h-8 rounded-full object-cover border-2 border-primary" />
+                                ` : `
+                                    <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-semibold">
+                                        ${currentUser ? getInitials(currentUser.full_name) : 'U'}
+                                    </div>
+                                `}
                                 <span class="font-medium">${currentUser ? currentUser.full_name.split(' ')[0] : 'User'}</span>
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>

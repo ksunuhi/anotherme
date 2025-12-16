@@ -58,7 +58,13 @@
                     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
                         <h3 class="font-bold text-gray-900 mb-4">Create New Post</h3>
                         <div class="flex items-start space-x-4">
-                            <div class="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white font-semibold text-lg flex-shrink-0">
+                            <!-- Current User Avatar -->
+                            <img v-if="hasProfilePicture(user)"
+                                 :src="getProfilePictureUrl(user)"
+                                 :alt="user?.full_name"
+                                 class="w-12 h-12 rounded-full object-cover flex-shrink-0" />
+                            <div v-else
+                                 class="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white font-semibold text-lg flex-shrink-0">
                                 {{ user ? getInitials(user.full_name) : 'U' }}
                             </div>
                             <div class="flex-1">
@@ -143,7 +149,13 @@
                         <!-- Post Card -->
                         <div v-for="post in filteredPosts" :key="post.id" class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
                             <div class="flex items-start space-x-4">
-                                <div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0"
+                                <!-- Post Author Avatar -->
+                                <img v-if="hasProfilePicture(post.author)"
+                                     :src="getProfilePictureUrl(post.author)"
+                                     :alt="post.author.name"
+                                     class="w-12 h-12 rounded-full object-cover flex-shrink-0" />
+                                <div v-else
+                                     class="w-12 h-12 rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0"
                                      :style="{ backgroundColor: getAvatarColor(post.author.id) }">
                                     {{ getInitials(post.author.name) }}
                                 </div>
@@ -235,7 +247,13 @@
                                         <!-- Comments List -->
                                         <div v-if="post.commentsList && post.commentsList.length > 0" class="space-y-3 mb-4">
                                             <div v-for="comment in post.commentsList" :key="comment.id" class="flex items-start space-x-3">
-                                                <div class="w-8 h-8 rounded-full flex items-center justify-center text-white font-semibold text-xs flex-shrink-0"
+                                                <!-- Comment Author Avatar -->
+                                                <img v-if="hasProfilePicture(comment.author)"
+                                                     :src="getProfilePictureUrl(comment.author)"
+                                                     :alt="comment.author.full_name"
+                                                     class="w-8 h-8 rounded-full object-cover flex-shrink-0" />
+                                                <div v-else
+                                                     class="w-8 h-8 rounded-full flex items-center justify-center text-white font-semibold text-xs flex-shrink-0"
                                                      :style="{ backgroundColor: getAvatarColor(comment.author.id) }">
                                                     {{ getInitials(comment.author.full_name) }}
                                                 </div>
@@ -257,7 +275,13 @@
 
                                         <!-- Comment Input -->
                                         <div class="flex items-start space-x-3">
-                                            <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-semibold text-xs flex-shrink-0">
+                                            <!-- Current User Avatar -->
+                                            <img v-if="hasProfilePicture(user)"
+                                                 :src="getProfilePictureUrl(user)"
+                                                 :alt="user?.full_name"
+                                                 class="w-8 h-8 rounded-full object-cover flex-shrink-0" />
+                                            <div v-else
+                                                 class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-semibold text-xs flex-shrink-0">
                                                 {{ user ? getInitials(user.full_name) : 'U' }}
                                             </div>
                                             <div class="flex-1">
@@ -340,7 +364,13 @@
                         <div class="space-y-3">
                             <div v-for="friend in myFriends.slice(0, 3)" :key="friend.id"
                                  class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                                <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0"
+                                <!-- Friend Avatar -->
+                                <img v-if="hasProfilePicture(friend)"
+                                     :src="getProfilePictureUrl(friend)"
+                                     :alt="friend.name"
+                                     class="w-10 h-10 rounded-full object-cover flex-shrink-0" />
+                                <div v-else
+                                     class="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0"
                                      :style="{ backgroundColor: getAvatarColor(friend.id) }">
                                     {{ getInitials(friend.name) }}
                                 </div>
@@ -375,7 +405,13 @@
                                  @click="sendMessage(message.from.id)"
                                  class="p-3 hover:bg-gray-50 rounded-lg cursor-pointer border border-gray-200 transition">
                                 <div class="flex items-start space-x-3">
-                                    <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm flex-shrink-0"
+                                    <!-- Message Sender Avatar -->
+                                    <img v-if="hasProfilePicture(message.from)"
+                                         :src="getProfilePictureUrl(message.from)"
+                                         :alt="message.from.name"
+                                         class="w-10 h-10 rounded-full object-cover flex-shrink-0" />
+                                    <div v-else
+                                         class="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm flex-shrink-0"
                                          :style="{ backgroundColor: getAvatarColor(message.from.id) }">
                                         {{ getInitials(message.from.name) }}
                                     </div>
@@ -787,6 +823,13 @@
                     ];
                     const hash = userId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
                     return colors[hash % colors.length];
+                },
+                getProfilePictureUrl(user) {
+                    if (!user || !user.profile_picture_url) return null;
+                    return `http://localhost:8000/uploads/${user.profile_picture_url}`;
+                },
+                hasProfilePicture(user) {
+                    return user && user.profile_picture_url;
                 },
                 formatDate(dateString) {
                     const date = new Date(dateString);
