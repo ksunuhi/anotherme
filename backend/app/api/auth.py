@@ -1,10 +1,12 @@
 """
 Authentication API endpoints
 """
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from datetime import datetime
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 
 from app.core.database import get_db
 from app.core.security import (
@@ -28,6 +30,7 @@ from app.schemas.user import UserResponse, UserMe
 from app.core.email import send_password_reset_email, send_verification_email
 
 router = APIRouter()
+limiter = Limiter(key_func=get_remote_address)
 
 # OAuth2 scheme for token authentication
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
@@ -74,7 +77,8 @@ async def check_email_availability(email: str, db: Session = Depends(get_db)):
 
 
 @router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
-async def register(user_data: UserRegister, db: Session = Depends(get_db)):
+@limiter.limit("3/hour")  # Max 3 registrations per hour per IP
+async def register(request: Request, user_data: UserRegister, db: Session = Depends(get_db)):
     """
     Register a new user
 
@@ -140,7 +144,8 @@ async def register(user_data: UserRegister, db: Session = Depends(get_db)):
 
 
 @router.post("/login", response_model=Token)
-async def login(user_data: UserLogin, db: Session = Depends(get_db)):
+@limiter.limit("5/15minutes")  # Max 5 login attempts per 15 minutes
+async def login(request: Request, user_data: UserLogin, db: Session = Depends(get_db)):
     """
     Login user and return access token
 
@@ -180,7 +185,9 @@ async def login(user_data: UserLogin, db: Session = Depends(get_db)):
 
 
 @router.post("/login/form", response_model=Token)
+@limiter.limit("5/15minutes")  # Max 5 login attempts per 15 minutes
 async def login_form(
+    request: Request,
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db)
 ):
@@ -233,7 +240,8 @@ async def logout(current_user: User = Depends(get_current_user)):
 
 
 @router.post("/forgot-password", response_model=ForgotPasswordResponse)
-async def forgot_password(request: ForgotPasswordRequest, db: Session = Depends(get_db)):
+@limiter.limit("3/hour")  # Max 3 password reset requests per hour
+async def forgot_password(http_request: Request, request: ForgotPasswordRequest, db: Session = Depends(get_db)):
     """
     Request password reset email
 

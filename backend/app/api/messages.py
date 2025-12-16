@@ -1,18 +1,22 @@
 """
 Messages API endpoints
 """
-from fastapi import APIRouter, Depends, HTTPException, status, Query
+from fastapi import APIRouter, Depends, HTTPException, status, Query, Request
 from sqlalchemy.orm import Session
 from sqlalchemy import and_, or_, desc, func
 from typing import List
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 
 from app.core.database import get_db
 from app.api.auth import get_current_user
+from app.core.security_utils import sanitize_message_content
 from app.models.user import User
 from app.models.message import Message
 from app.schemas.message import MessageCreate, MessageResponse, MessageSender, ConversationResponse
 
 router = APIRouter()
+limiter = Limiter(key_func=get_remote_address)
 
 
 def get_message_sender(user: User) -> MessageSender:
@@ -26,7 +30,9 @@ def get_message_sender(user: User) -> MessageSender:
 
 
 @router.post("/", response_model=MessageResponse, status_code=status.HTTP_201_CREATED)
+@limiter.limit("30/5minutes")  # Max 30 messages per 5 minutes
 async def send_message(
+    request: Request,
     message_data: MessageCreate,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
@@ -49,11 +55,14 @@ async def send_message(
             detail="You cannot send a message to yourself"
         )
 
+    # Sanitize message content to prevent XSS attacks
+    sanitized_content = sanitize_message_content(message_data.content)
+
     # Create message
     new_message = Message(
         sender_id=current_user.id,
         recipient_id=message_data.recipient_id,
-        content=message_data.content,
+        content=sanitized_content,
         is_read=False
     )
 

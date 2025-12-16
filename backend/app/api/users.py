@@ -13,6 +13,7 @@ import io
 
 from app.core.database import get_db
 from app.api.auth import get_current_user
+from app.core.security_utils import sanitize_bio
 from app.models.user import User
 from app.models.post import Post
 from app.models.friendship import Friendship
@@ -224,7 +225,7 @@ async def update_my_profile(
             current_user.display_name = user_update.full_name
 
     if user_update.bio is not None:
-        current_user.bio = user_update.bio
+        current_user.bio = sanitize_bio(user_update.bio)
 
     if user_update.city is not None:
         current_user.city = user_update.city

@@ -1,20 +1,24 @@
 """
 Posts API endpoints
 """
-from fastapi import APIRouter, Depends, HTTPException, status, Query
+from fastapi import APIRouter, Depends, HTTPException, status, Query, Request
 from sqlalchemy.orm import Session
 from sqlalchemy import or_, and_
 from typing import List, Optional
 from datetime import datetime
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 
 from app.core.database import get_db
 from app.api.auth import get_current_user
+from app.core.security_utils import sanitize_post_content, sanitize_comment_content
 from app.models.user import User
 from app.models.post import Post, PostLike, Comment
 from app.models.friendship import Friendship
 from app.schemas.post import PostCreate, PostUpdate, PostResponse, PostAuthor, CommentCreate, CommentResponse
 
 router = APIRouter()
+limiter = Limiter(key_func=get_remote_address)
 
 
 def get_post_author(user: User) -> PostAuthor:
@@ -28,7 +32,9 @@ def get_post_author(user: User) -> PostAuthor:
 
 
 @router.post("/", response_model=PostResponse, status_code=status.HTTP_201_CREATED)
+@limiter.limit("10/5minutes")  # Max 10 posts per 5 minutes
 async def create_post(
+    request: Request,
     post_data: PostCreate,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
@@ -36,11 +42,14 @@ async def create_post(
     """
     Create a new post
     """
+    # Sanitize user input to prevent XSS attacks
+    sanitized_content = sanitize_post_content(post_data.content)
+
     # Create post
     new_post = Post(
         author_id=current_user.id,
         title=post_data.title,
-        content=post_data.content,
+        content=sanitized_content,
         visibility=post_data.visibility
     )
 
@@ -194,8 +203,8 @@ async def update_post(
             detail="You can only edit your own posts"
         )
 
-    # Update post
-    post.content = post_data.content
+    # Update post (sanitize content to prevent XSS)
+    post.content = sanitize_post_content(post_data.content)
     if post_data.title is not None:
         post.title = post_data.title
     post.updated_at = datetime.utcnow()
@@ -332,7 +341,9 @@ async def get_comments(
 
 
 @router.post("/{post_id}/comments", response_model=CommentResponse, status_code=status.HTTP_201_CREATED)
+@limiter.limit("20/5minutes")  # Max 20 comments per 5 minutes
 async def create_comment(
+    request: Request,
     post_id: str,
     comment_data: CommentCreate,
     current_user: User = Depends(get_current_user),
@@ -349,11 +360,14 @@ async def create_comment(
             detail="Post not found"
         )
 
+    # Sanitize comment content to prevent XSS attacks
+    sanitized_content = sanitize_comment_content(comment_data.content)
+
     # Create comment
     new_comment = Comment(
         post_id=post_id,
         author_id=current_user.id,
-        content=comment_data.content,
+        content=sanitized_content,
         parent_comment_id=comment_data.parent_comment_id
     )
 
