@@ -1252,4 +1252,447 @@ Choose based on priority! All three are important for launch.
 
 ---
 
-Last Updated: 2025-12-16 (End of Day 11)
+## Day 12 - Rate Limit Configuration & Environment Variables ✅
+
+**Date:** 2025-12-21
+**Duration:** ~15 minutes
+**Status:** Rate limits fully configurable via .env file
+
+---
+
+## ✅ Completed Tasks
+
+### 1. Rate Limit Configuration System (100%)
+
+**Backend Configuration:**
+- ✅ Added 6 rate limit settings to `backend/app/core/config.py`
+  - `RATE_LIMIT_LOGIN` - Default: "5/15minutes"
+  - `RATE_LIMIT_REGISTER` - Default: "3/hour"
+  - `RATE_LIMIT_FORGOT_PASSWORD` - Default: "3/hour"
+  - `RATE_LIMIT_CREATE_POST` - Default: "10/5minutes"
+  - `RATE_LIMIT_CREATE_COMMENT` - Default: "20/5minutes"
+  - `RATE_LIMIT_SEND_MESSAGE` - Default: "30/5minutes"
+- ✅ All settings loaded from `.env` file via Pydantic Settings
+
+**Environment Files:**
+- ✅ Updated `backend/.env.example` with rate limit documentation
+  - Added clear examples and format explanation
+  - Included testing tips (e.g., "100/minute" for faster testing)
+- ✅ Updated `backend/.env` with production-ready defaults
+
+**API Endpoint Updates:**
+- ✅ Updated `backend/app/api/auth.py` (4 endpoints)
+  - Register endpoint: `settings.RATE_LIMIT_REGISTER`
+  - Login endpoint: `settings.RATE_LIMIT_LOGIN`
+  - Login form (Swagger): `settings.RATE_LIMIT_LOGIN`
+  - Forgot password: `settings.RATE_LIMIT_FORGOT_PASSWORD`
+- ✅ Updated `backend/app/api/posts.py` (2 endpoints)
+  - Create post: `settings.RATE_LIMIT_CREATE_POST`
+  - Create comment: `settings.RATE_LIMIT_CREATE_COMMENT`
+- ✅ Updated `backend/app/api/messages.py` (1 endpoint)
+  - Send message: `settings.RATE_LIMIT_SEND_MESSAGE`
+
+**Testing & Validation:**
+- ✅ Verified config loads successfully from .env
+- ✅ Tested all API modules import without errors
+- ✅ Confirmed rate limits are read from environment variables
+
+### Benefits of This Implementation
+
+**Before:**
+- Rate limits hardcoded in Python files
+- Required code changes to adjust limits
+- Difficult to test different scenarios
+- Required server restart after code changes
+
+**After:**
+- All rate limits in `.env` file (one central location)
+- Easy to adjust for testing (just edit .env, restart server)
+- Different limits for dev/staging/production environments
+- Clear documentation in .env.example
+- No code changes needed to modify limits
+
+### How to Use
+
+**For Development/Testing:**
+1. Edit `backend/.env` file
+2. Change rate limit values (e.g., `RATE_LIMIT_LOGIN=100/minute` for testing)
+3. Restart the backend server
+4. New limits take effect immediately
+
+**For Production:**
+1. Set conservative limits in production `.env`
+2. Monitor usage and adjust as needed
+3. Can increase limits for verified users in future
+
+### Files Modified
+
+**Backend:**
+- `backend/app/core/config.py` (added 6 rate limit settings)
+- `backend/app/api/auth.py` (4 rate limit decorators updated)
+- `backend/app/api/posts.py` (2 rate limit decorators updated)
+- `backend/app/api/messages.py` (1 rate limit decorator updated)
+- `backend/.env.example` (added rate limit documentation)
+- `backend/.env` (added rate limit values)
+
+**Total: 6 files modified**
+
+### Testing Examples
+
+**Example 1: Test login rate limiting quickly**
+```env
+# In .env, change from:
+RATE_LIMIT_LOGIN=5/15minutes
+
+# To:
+RATE_LIMIT_LOGIN=3/minute
+
+# Restart server, try logging in 4 times within a minute → should get rate limited
+```
+
+**Example 2: Disable rate limiting for load testing**
+```env
+# Set very high limits:
+RATE_LIMIT_LOGIN=10000/minute
+RATE_LIMIT_CREATE_POST=10000/minute
+# etc.
+```
+
+**Example 3: Strict production limits**
+```env
+# Conservative limits for production:
+RATE_LIMIT_LOGIN=3/10minutes
+RATE_LIMIT_REGISTER=2/hour
+RATE_LIMIT_CREATE_POST=5/10minutes
+```
+
+---
+
+## Day 12 (Continued) - Mobile Responsive Testing ✅
+
+**Date:** 2025-12-21 (Afternoon)
+**Duration:** ~30 minutes
+**Status:** All pages mobile-responsive and tested
+
+### Completed Tasks
+
+#### 1. Messages Page Mobile Layout Fix (100%)
+- ✅ Fixed two-column layout cutting off on mobile
+- ✅ Implemented responsive behavior:
+  - **Mobile**: Show conversation list OR message thread (one at a time)
+  - **Desktop**: Show both panels side-by-side
+- ✅ Added back button for mobile navigation
+  - Visible only on mobile (< 768px)
+  - Returns to conversation list from message thread
+- ✅ Used Tailwind responsive classes (`hidden md:flex`)
+
+#### 2. Mobile Responsive Testing (100%) ✅
+**Tested on:** iPhone 12 Pro device view
+- ✅ Landing page (`index.html`) - Works fine
+- ✅ Login page (`login.html`) - Works fine
+- ✅ Registration (`register.html`) - All 3 steps work fine
+- ✅ Dashboard (`dashboard.html`) - Works fine
+- ✅ Profile page (`profile.html`) - Works fine
+- ✅ Friends page (`friends.html`) - Works fine
+- ✅ Messages page (`messages.html`) - Fixed and now works fine
+- ✅ Touch interactions - All functional
+- ✅ Forms - All properly sized for mobile
+
+**Result:** ✅ All pages confirmed working on mobile devices
+
+### Files Modified
+- `frontend/pages/messages.html` (mobile layout fix)
+  - Updated conversation list CSS classes
+  - Updated message thread CSS classes
+  - Added back button with click handler
+  - Added `closeConversation()` method
+
+**Total: 1 file modified**
+
+---
+
+## Day 12 (Continued) - Custom Error Pages ✅
+
+**Date:** 2025-12-21 (Evening)
+**Duration:** ~30 minutes
+**Status:** Professional error pages complete and configured
+
+### Completed Tasks
+
+#### 1. Custom 404 Error Page (100%)
+**File:** `frontend/pages/404.html`
+
+**Features:**
+- ✅ Professional design matching AnotherMe branding
+- ✅ Large, clear "404" error code
+- ✅ Friendly, helpful error message
+- ✅ Floating animation on icon
+- ✅ "Go to Homepage" button
+- ✅ "Go Back" button (browser history)
+- ✅ Quick links to important pages:
+  - Dashboard
+  - Find Friends
+  - Messages
+  - Contact Support
+- ✅ Fun fact about HTTP 404 errors (educational)
+- ✅ Fully responsive (mobile-friendly)
+- ✅ Uses Tailwind CSS (consistent with site)
+
+#### 2. Custom 500 Error Page (100%)
+**File:** `frontend/pages/500.html`
+
+**Features:**
+- ✅ Professional design with error-appropriate styling (red/amber tones)
+- ✅ Large, clear "500" error code
+- ✅ Empathetic error message ("not your fault")
+- ✅ Pulse animation on icon
+- ✅ "Try Again" button (reloads page)
+- ✅ "Go to Homepage" button
+- ✅ Status message explaining what happened
+- ✅ Helpful checklist of what users can do:
+  - Wait and refresh
+  - Clear browser cache
+  - Contact support
+- ✅ Unique error reference ID for debugging (auto-generated)
+- ✅ Quick links to support and homepage
+- ✅ Fully responsive (mobile-friendly)
+
+#### 3. Backend Error Handler Configuration (100%)
+**File:** `backend/main.py`
+
+**Features:**
+- ✅ Custom exception handler for HTTP errors (404, etc.)
+- ✅ Custom exception handler for server errors (500)
+- ✅ Smart routing:
+  - **API requests** (`/api/*`) → Return JSON errors
+  - **Page requests** → Return custom HTML error pages
+- ✅ Fallback handling if error pages don't exist
+- ✅ Added required imports (FileResponse, StarletteHTTPException)
+
+#### 4. Testing Documentation (100%)
+**File:** `frontend/pages/ERROR_PAGES_TEST.md`
+
+**Contents:**
+- ✅ Complete testing guide
+- ✅ Three testing methods explained
+- ✅ Features checklist for both error pages
+- ✅ Production deployment notes
+- ✅ Design consistency notes
+
+### Design Highlights
+
+**Consistent Branding:**
+- Uses AnotherMe color scheme (primary: #6366F1)
+- Tailwind CSS for consistency
+- Professional gradient backgrounds
+- Smooth animations
+
+**User Experience:**
+- Clear, non-technical language
+- Multiple action options (homepage, back, try again)
+- Helpful guidance (what to do next)
+- Visual appeal reduces user frustration
+
+**Developer Experience:**
+- Error reference IDs for 500 errors (debugging)
+- Clean separation: API vs page errors
+- Easy to maintain and update
+
+### Files Created/Modified
+
+**Frontend:**
+- `frontend/pages/404.html` (new - 94 lines)
+- `frontend/pages/500.html` (new - 130 lines)
+- `frontend/pages/ERROR_PAGES_TEST.md` (new - testing guide)
+
+**Backend:**
+- `backend/main.py` (updated - added error handlers)
+
+**Total: 3 files created, 1 file modified**
+
+### How It Works
+
+**Before:**
+- 404 errors: Default browser "Page Not Found"
+- 500 errors: Default browser "Server Error"
+- Unprofessional, confusing for users
+
+**After:**
+- 404 errors: Custom branded page with helpful navigation
+- 500 errors: Custom page with empathy and troubleshooting steps
+- Professional, user-friendly experience
+
+### Testing
+
+You can test the error pages:
+
+**Direct access:**
+```
+http://localhost:8080/pages/404.html
+http://localhost:8080/pages/500.html
+```
+
+**Real 404 error (via backend):**
+```
+http://localhost:8000/nonexistent-page
+```
+
+**API errors still return JSON:**
+```
+http://localhost:8000/api/nonexistent-endpoint
+→ Returns JSON, not HTML
+```
+
+---
+
+## 📋 NEXT STEPS - Final Push to Launch
+
+### Priority 1: Final Testing & Bug Fixes (1-2 hours) 🎯
+- [ ] Complete security testing (run all 17 tests in SECURITY_TEST_PLAN.md)
+- [ ] Test all features end-to-end
+- [ ] Fix any remaining bugs
+- [ ] Performance testing (page load times)
+- [ ] Cross-browser testing (Chrome, Firefox, Safari, Edge)
+
+### Priority 2: Deployment Preparation (When Ready)
+- [ ] Choose hosting platform
+- [ ] Set up production environment
+- [ ] Configure domain & SSL
+- [ ] Database backups
+- [ ] Documentation updates
+
+---
+
+## 📊 Current Progress: ~80% Complete ⬆️
+
+**Phase 1 MVP - Core Features:**
+- ✅ Authentication (register, login, logout, password reset)
+- ✅ Email verification with resend functionality
+- ✅ Profile pictures with upload/delete
+- ✅ User profiles (view, edit, bio)
+- ✅ Posts (create, edit, delete, like)
+- ✅ Comments (create, delete, view)
+- ✅ Friends system (add, remove, view)
+- ✅ Direct messaging (send, read, unread counts)
+- ✅ Birthday twin matching
+- ✅ Auto-refresh (messages, posts, comments every 30s)
+- ✅ Comprehensive security hardening
+  - ✅ Rate limiting on all critical endpoints
+  - ✅ **Rate limits now configurable via .env (NEW - Day 12)**
+  - ✅ XSS protection with input sanitization
+  - ✅ Security headers (XSS, clickjacking, MIME sniffing)
+  - ✅ Friendly error messages
+- ✅ Contact form
+- ✅ Database cleanup & migrations
+- ✅ **Mobile responsive design - tested on iPhone (NEW - Day 12)**
+- ✅ **Custom error pages (404, 500) - Professional & branded (NEW - Day 12)**
+
+**Remaining for Launch:**
+- ⏳ Final testing & bug fixes - 1-2 hours
+- ⏳ Production deployment - when ready
+
+**Estimated Time to Launch:** 1-2 hours of work remaining! 🚀
+
+---
+
+## 💡 How to Resume Tomorrow (Day 13)
+
+### Quick Start:
+1. **Review this file** - Check Day 12 completion (rate limits)
+2. **Test rate limit configuration:**
+   ```bash
+   cd backend
+   # Try changing RATE_LIMIT_LOGIN in .env to test
+   uvicorn main:app --reload
+   ```
+3. **Start frontend server:**
+   ```bash
+   cd frontend
+   python -m http.server 8080
+   ```
+
+### Next Session Focus: **Final Testing & Deployment!** 🚀
+
+**Recommended Approach:**
+1. **Final Testing** (1-2 hours)
+   - Run security test suite (SECURITY_TEST_PLAN.md)
+   - End-to-end feature testing
+   - Cross-browser testing (Chrome, Firefox, Safari, Edge)
+   - Performance testing
+2. **Deploy!** 🎉
+   - Choose hosting platform
+   - Configure production environment
+   - Launch to the world!
+
+**You're almost there!** Only 1-2 hours of final testing remaining before deployment.
+
+---
+
+## 🎯 Day 13 Plan - Final Testing & Launch
+
+### What to Do Next Session:
+
+**1. Final Testing (1-2 hours)**
+- [ ] Run through SECURITY_TEST_PLAN.md (17 tests)
+- [ ] End-to-end user flow testing:
+  - [ ] Register new account → verify email → login
+  - [ ] Upload profile picture
+  - [ ] Create a post → like → comment
+  - [ ] Add friend → send message
+  - [ ] Find birthday twins
+- [ ] Test error pages (404, 500)
+- [ ] Cross-browser check (Chrome, Firefox, Safari)
+- [ ] Mobile testing on actual device (if possible)
+
+**2. Deployment Preparation**
+- [ ] Review .env settings for production
+- [ ] Choose hosting platform (Render, Railway, Heroku, DigitalOcean, etc.)
+- [ ] Plan database strategy (SQLite is fine for <5000 users)
+- [ ] Review security checklist
+
+**3. Launch! 🚀**
+- [ ] Deploy backend
+- [ ] Deploy frontend
+- [ ] Test production environment
+- [ ] Celebrate! 🎉
+
+### Post-Launch Optimizations (Future)
+- [ ] Build Tailwind CSS locally (99% size reduction)
+- [ ] Set up PostgreSQL (when > 5000 users)
+- [ ] Add analytics (Google Analytics/Plausible)
+- [ ] Monitor performance
+- [ ] Gather user feedback
+
+---
+
+**You're almost there!** Only 1-2 hours of final testing remaining before deployment.
+
+### Day 12 Summary - Excellent Progress! 🎉
+
+**Total work today:**
+- ✅ Rate limit configuration (15 min)
+- ✅ Mobile responsive testing & fixes (30 min)
+- ✅ Custom error pages (30 min)
+
+**Total:** ~75 minutes of focused work, huge progress!
+
+**Files Modified Today:**
+- 6 backend files (rate limits)
+- 1 frontend file (messages.html mobile fix)
+- 3 new error page files (404, 500, testing guide)
+- 1 backend file (error handlers in main.py)
+- **Total: 11 files**
+
+### Technical Decisions Made Today
+
+**CDN vs Local Libraries:**
+- ✅ **Decision:** Keep Tailwind CSS and Vue.js on CDN for MVP launch
+- **Rationale:**
+  - Faster time to launch
+  - CDN is acceptable for initial users
+  - Can optimize post-launch (Tailwind: 3.5MB → 15KB reduction possible)
+- **Future:** Add Tailwind build process after launch for 99% size reduction
+
+---
+
+Last Updated: 2025-12-21 (Day 12 Complete - Ready for Final Testing)

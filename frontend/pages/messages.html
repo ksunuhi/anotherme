@@ -40,7 +40,10 @@
             <div class="h-full flex">
 
                 <!-- LEFT: Conversations List -->
-                <div class="w-full md:w-96 bg-white border-r border-gray-200 flex flex-col">
+                <div :class="[
+                    'w-full md:w-96 bg-white border-r border-gray-200 flex flex-col',
+                    activeUserId ? 'hidden md:flex' : 'flex'
+                ]">
                     <!-- Header -->
                     <div class="p-4 border-b border-gray-200">
                         <h1 class="text-xl font-bold text-gray-900">Messages</h1>
@@ -92,10 +95,20 @@
                 </div>
 
                 <!-- RIGHT: Active Conversation -->
-                <div v-if="activeUserId" class="flex-1 flex flex-col bg-white">
+                <div v-if="activeUserId" :class="[
+                    'flex-1 flex-col bg-white',
+                    activeUserId ? 'flex' : 'hidden md:flex'
+                ]">
                     <!-- Conversation Header -->
                     <div class="p-4 border-b border-gray-200 flex items-center justify-between">
                         <div class="flex items-center space-x-3">
+                            <!-- Back button (mobile only) -->
+                            <button @click="closeConversation" class="md:hidden -ml-2 mr-2 p-2 text-gray-600 hover:text-gray-900">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                                </svg>
+                            </button>
+
                             <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold"
                                  :style="{ backgroundColor: getAvatarColor(activeUserId) }">
                                 {{ getInitials(activeUserName) }}
@@ -262,6 +275,12 @@
                     this.activeUserName = conv ? conv.user_name : 'User';
 
                     await this.loadMessages(userId);
+                },
+                closeConversation() {
+                    // Close active conversation (mobile only - returns to conversation list)
+                    this.activeUserId = null;
+                    this.activeUserName = '';
+                    this.messages = [];
                 },
                 async startNewConversation(userId) {
                     try {

@@ -5,10 +5,13 @@ Main FastAPI application entry point
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import HTMLResponse, FileResponse
+from fastapi.exceptions import RequestValidationError
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.exceptions import HTTPException as StarletteHTTPException
 from app.core.config import settings
 from app.core.database import engine, Base
 from app.api import auth, posts, users, friends, messages, contact, statistics
@@ -99,6 +102,59 @@ app.include_router(statistics.router, prefix="/api/statistics", tags=["Statistic
 # Ensure uploads directory exists
 os.makedirs("uploads/profile_pictures", exist_ok=True)
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+
+
+# Custom error handlers
+@app.exception_handler(StarletteHTTPException)
+async def custom_http_exception_handler(request: Request, exc: StarletteHTTPException):
+    """
+    Custom handler for HTTP exceptions
+    Returns custom error pages for 404 and 500 errors
+    """
+    # For API requests, return JSON
+    if request.url.path.startswith("/api/"):
+        return {
+            "detail": exc.detail,
+            "status_code": exc.status_code
+        }
+
+    # For page requests, return custom HTML error pages
+    if exc.status_code == 404:
+        error_page_path = os.path.join(os.path.dirname(__file__), "..", "frontend", "pages", "404.html")
+        if os.path.exists(error_page_path):
+            return FileResponse(error_page_path, status_code=404)
+
+    # For other errors, return default JSON
+    return {
+        "detail": exc.detail,
+        "status_code": exc.status_code
+    }
+
+
+@app.exception_handler(Exception)
+async def custom_server_error_handler(request: Request, exc: Exception):
+    """
+    Custom handler for 500 Internal Server Errors
+    Returns custom error page for non-API requests
+    """
+    # For API requests, return JSON
+    if request.url.path.startswith("/api/"):
+        return {
+            "detail": "Internal server error",
+            "status_code": 500
+        }
+
+    # For page requests, return custom HTML error page
+    error_page_path = os.path.join(os.path.dirname(__file__), "..", "frontend", "pages", "500.html")
+    if os.path.exists(error_page_path):
+        return FileResponse(error_page_path, status_code=500)
+
+    # Fallback to JSON
+    return {
+        "detail": "Internal server error",
+        "status_code": 500
+    }
+
 
 # Additional routers to be added:
 # app.include_router(groups.router, prefix="/api/groups", tags=["Groups"])

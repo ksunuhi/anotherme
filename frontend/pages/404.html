@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page Not Found | AnotherMe</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366F1',
+                        'primary-dark': '#4F46E5',
+                        'primary-light': '#A5B4FC',
+                        'accent-purple': '#A855F7',
+                        'accent-teal': '#14B8A6',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/components.css">
+
+    <style>
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-primary/5 via-white to-accent-purple/5 min-h-screen flex items-center justify-center p-4">
+    <div class="max-w-2xl w-full text-center">
+        <!-- 404 Illustration -->
+        <div class="mb-8 float-animation">
+            <svg class="w-64 h-64 mx-auto text-primary/20" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+            </svg>
+        </div>
+
+        <!-- Error Code -->
+        <h1 class="text-8xl md:text-9xl font-bold text-primary mb-4">404</h1>
+
+        <!-- Error Message -->
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            Oops! Page Not Found
+        </h2>
+
+        <p class="text-lg text-gray-600 mb-8 max-w-md mx-auto">
+            The page you're looking for seems to have wandered off. It might have been moved, deleted, or never existed in the first place.
+        </p>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <a href="index.html"
+               class="px-8 py-3 bg-primary text-white rounded-lg font-semibold hover:bg-primary-dark transition shadow-lg hover:shadow-xl">
+                Go to Homepage
+            </a>
+
+            <button onclick="window.history.back()"
+                    class="px-8 py-3 bg-white text-gray-700 border-2 border-gray-200 rounded-lg font-semibold hover:border-primary hover:text-primary transition">
+                Go Back
+            </button>
+        </div>
+
+        <!-- Helpful Links -->
+        <div class="mt-12 pt-8 border-t border-gray-200">
+            <p class="text-sm text-gray-500 mb-4">Or try one of these helpful links:</p>
+            <div class="flex flex-wrap gap-4 justify-center text-sm">
+                <a href="dashboard.html" class="text-primary hover:text-primary-dark font-medium">Dashboard</a>
+                <span class="text-gray-300">•</span>
+                <a href="friends.html" class="text-primary hover:text-primary-dark font-medium">Find Friends</a>
+                <span class="text-gray-300">•</span>
+                <a href="messages.html" class="text-primary hover:text-primary-dark font-medium">Messages</a>
+                <span class="text-gray-300">•</span>
+                <a href="contact.html" class="text-primary hover:text-primary-dark font-medium">Contact Support</a>
+            </div>
+        </div>
+
+        <!-- Fun Fact -->
+        <div class="mt-8 p-6 bg-white rounded-xl shadow-sm border border-gray-100">
+            <p class="text-sm text-gray-600">
+                💡 <strong>Did you know?</strong> HTTP 404 errors are named after room number 404 at CERN, where the World Wide Web was invented. The room where the first web servers were located!
+            </p>
+        </div>
+    </div>
+</body>
+</html>

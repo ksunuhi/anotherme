@@ -10,6 +10,7 @@ from slowapi import Limiter
 from slowapi.util import get_remote_address
 
 from app.core.database import get_db
+from app.core.config import settings
 from app.api.auth import get_current_user
 from app.core.security_utils import sanitize_post_content, sanitize_comment_content
 from app.models.user import User
@@ -32,7 +33,7 @@ def get_post_author(user: User) -> PostAuthor:
 
 
 @router.post("/", response_model=PostResponse, status_code=status.HTTP_201_CREATED)
-@limiter.limit("10/5minutes")  # Max 10 posts per 5 minutes
+@limiter.limit(settings.RATE_LIMIT_CREATE_POST)  # Max posts per time window (configurable in .env)
 async def create_post(
     request: Request,
     post_data: PostCreate,
@@ -341,7 +342,7 @@ async def get_comments(
 
 
 @router.post("/{post_id}/comments", response_model=CommentResponse, status_code=status.HTTP_201_CREATED)
-@limiter.limit("20/5minutes")  # Max 20 comments per 5 minutes
+@limiter.limit(settings.RATE_LIMIT_CREATE_COMMENT)  # Max comments per time window (configurable in .env)
 async def create_comment(
     request: Request,
     post_id: str,

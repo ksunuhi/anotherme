@@ -35,6 +35,15 @@ class Settings(BaseSettings):
     # Frontend URL
     FRONTEND_URL: str = "http://localhost:8080"
 
+    # Rate Limiting (format: "count/time_window")
+    # Examples: "5/minute", "10/5minutes", "3/hour", "100/day"
+    RATE_LIMIT_LOGIN: str = "5/15minutes"
+    RATE_LIMIT_REGISTER: str = "3/hour"
+    RATE_LIMIT_FORGOT_PASSWORD: str = "3/hour"
+    RATE_LIMIT_CREATE_POST: str = "10/5minutes"
+    RATE_LIMIT_CREATE_COMMENT: str = "20/5minutes"
+    RATE_LIMIT_SEND_MESSAGE: str = "30/5minutes"
+
     class Config:
         env_file = ".env"
         case_sensitive = True

@@ -9,6 +9,7 @@ from slowapi import Limiter
 from slowapi.util import get_remote_address
 
 from app.core.database import get_db
+from app.core.config import settings
 from app.api.auth import get_current_user
 from app.core.security_utils import sanitize_message_content
 from app.models.user import User
@@ -30,7 +31,7 @@ def get_message_sender(user: User) -> MessageSender:
 
 
 @router.post("/", response_model=MessageResponse, status_code=status.HTTP_201_CREATED)
-@limiter.limit("30/5minutes")  # Max 30 messages per 5 minutes
+@limiter.limit(settings.RATE_LIMIT_SEND_MESSAGE)  # Max messages per time window (configurable in .env)
 async def send_message(
     request: Request,
     message_data: MessageCreate,

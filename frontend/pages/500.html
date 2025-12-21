@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>500 - Server Error | AnotherMe</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366F1',
+                        'primary-dark': '#4F46E5',
+                        'primary-light': '#A5B4FC',
+                        'accent-purple': '#A855F7',
+                        'accent-teal': '#14B8A6',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/components.css">
+
+    <style>
+        @keyframes pulse-slow {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .pulse-animation {
+            animation: pulse-slow 2s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-red-50 via-white to-orange-50 min-h-screen flex items-center justify-center p-4">
+    <div class="max-w-2xl w-full text-center">
+        <!-- 500 Illustration -->
+        <div class="mb-8 pulse-animation">
+            <svg class="w-64 h-64 mx-auto text-red-200" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/>
+                <path d="M12 6v6M12 16h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+        </div>
+
+        <!-- Error Code -->
+        <h1 class="text-8xl md:text-9xl font-bold text-red-500 mb-4">500</h1>
+
+        <!-- Error Message -->
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            Internal Server Error
+        </h2>
+
+        <p class="text-lg text-gray-600 mb-8 max-w-md mx-auto">
+            Oops! Something went wrong on our end. Our team has been notified and we're working to fix it as quickly as possible.
+        </p>
+
+        <!-- Status Message -->
+        <div class="mb-8 p-4 bg-amber-50 border border-amber-200 rounded-lg max-w-md mx-auto">
+            <p class="text-sm text-amber-800">
+                <strong>What happened?</strong> Our server encountered an unexpected error while processing your request. This is not your fault!
+            </p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
+            <button onclick="location.reload()"
+                    class="px-8 py-3 bg-primary text-white rounded-lg font-semibold hover:bg-primary-dark transition shadow-lg hover:shadow-xl">
+                Try Again
+            </button>
+
+            <a href="index.html"
+               class="px-8 py-3 bg-white text-gray-700 border-2 border-gray-200 rounded-lg font-semibold hover:border-primary hover:text-primary transition">
+                Go to Homepage
+            </a>
+        </div>
+
+        <!-- What to Do -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 text-left mb-8">
+            <h3 class="font-semibold text-gray-900 mb-3">What can you do?</h3>
+            <ul class="space-y-2 text-sm text-gray-600">
+                <li class="flex items-start">
+                    <svg class="w-5 h-5 text-primary mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span><strong>Wait a few minutes</strong> and try refreshing the page</span>
+                </li>
+                <li class="flex items-start">
+                    <svg class="w-5 h-5 text-primary mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span><strong>Clear your browser cache</strong> and try again</span>
+                </li>
+                <li class="flex items-start">
+                    <svg class="w-5 h-5 text-primary mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span><strong>Contact support</strong> if the problem persists</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Helpful Links -->
+        <div class="pt-8 border-t border-gray-200">
+            <p class="text-sm text-gray-500 mb-4">Need help?</p>
+            <div class="flex flex-wrap gap-4 justify-center text-sm">
+                <a href="dashboard.html" class="text-primary hover:text-primary-dark font-medium">Dashboard</a>
+                <span class="text-gray-300">•</span>
+                <a href="contact.html" class="text-primary hover:text-primary-dark font-medium">Contact Support</a>
+                <span class="text-gray-300">•</span>
+                <a href="index.html" class="text-primary hover:text-primary-dark font-medium">Homepage</a>
+            </div>
+        </div>
+
+        <!-- Error Reference (Optional - for debugging) -->
+        <div class="mt-8 text-xs text-gray-400">
+            <p>Error Reference: <span id="error-id" class="font-mono"></span></p>
+        </div>
+    </div>
+
+    <script>
+        // Generate a random error ID for debugging purposes
+        const errorId = 'ERR-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+        document.getElementById('error-id').textContent = errorId;
+    </script>
+</body>
+</html>

@@ -9,6 +9,7 @@ from slowapi import Limiter
 from slowapi.util import get_remote_address
 
 from app.core.database import get_db
+from app.core.config import settings
 from app.core.security import (
     verify_password,
     get_password_hash,
@@ -77,7 +78,7 @@ async def check_email_availability(email: str, db: Session = Depends(get_db)):
 
 
 @router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
-@limiter.limit("3/hour")  # Max 3 registrations per hour per IP
+@limiter.limit(settings.RATE_LIMIT_REGISTER)  # Max registrations per time window (configurable in .env)
 async def register(request: Request, user_data: UserRegister, db: Session = Depends(get_db)):
     """
     Register a new user
@@ -144,7 +145,7 @@ async def register(request: Request, user_data: UserRegister, db: Session = Depe
 
 
 @router.post("/login", response_model=Token)
-@limiter.limit("5/15minutes")  # Max 5 login attempts per 15 minutes
+@limiter.limit(settings.RATE_LIMIT_LOGIN)  # Max login attempts per time window (configurable in .env)
 async def login(request: Request, user_data: UserLogin, db: Session = Depends(get_db)):
     """
     Login user and return access token
@@ -185,7 +186,7 @@ async def login(request: Request, user_data: UserLogin, db: Session = Depends(ge
 
 
 @router.post("/login/form", response_model=Token)
-@limiter.limit("5/15minutes")  # Max 5 login attempts per 15 minutes
+@limiter.limit(settings.RATE_LIMIT_LOGIN)  # Max login attempts per time window (configurable in .env)
 async def login_form(
     request: Request,
     form_data: OAuth2PasswordRequestForm = Depends(),
@@ -240,7 +241,7 @@ async def logout(current_user: User = Depends(get_current_user)):
 
 
 @router.post("/forgot-password", response_model=ForgotPasswordResponse)
-@limiter.limit("3/hour")  # Max 3 password reset requests per hour
+@limiter.limit(settings.RATE_LIMIT_FORGOT_PASSWORD)  # Max password reset requests per time window (configurable in .env)
 async def forgot_password(http_request: Request, request: ForgotPasswordRequest, db: Session = Depends(get_db)):
     """
     Request password reset email
