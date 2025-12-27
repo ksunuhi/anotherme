@@ -274,6 +274,12 @@ async def upload_profile_picture(
             detail=f"File too large. Maximum size: {MAX_FILE_SIZE / 1024 / 1024}MB"
         )
 
+    # Track image objects to ensure cleanup
+    image = None
+    thumbnail = None
+    full_image = None
+    background = None
+
     try:
         # Open image with PIL
         image = Image.open(io.BytesIO(file_content))
@@ -285,7 +291,10 @@ async def upload_profile_picture(
             if image.mode == 'P':
                 image = image.convert('RGBA')
             background.paste(image, mask=image.split()[-1] if image.mode == 'RGBA' else None)
+            # Close original image and use background
+            image.close()
             image = background
+            background = None  # Reassigned to image
 
         # Generate unique filename
         filename = f"user-{current_user.id}{file_ext}"
@@ -347,6 +356,17 @@ async def upload_profile_picture(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error processing image: {str(e)}"
         )
+
+    finally:
+        # Explicitly close all PIL Image objects to prevent memory leaks
+        if image is not None:
+            image.close()
+        if thumbnail is not None:
+            thumbnail.close()
+        if full_image is not None:
+            full_image.close()
+        if background is not None:
+            background.close()
 
 
 @router.delete("/me/profile-picture")

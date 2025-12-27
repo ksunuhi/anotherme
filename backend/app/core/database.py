@@ -4,12 +4,16 @@ Database connection and session management
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
 from app.core.config import settings
 
 # Create database engine
+# Using StaticPool for SQLite to prevent connection pool memory leaks
 engine = create_engine(
     settings.DATABASE_URL,
-    connect_args={"check_same_thread": False}  # Needed for SQLite
+    connect_args={"check_same_thread": False},  # Needed for SQLite
+    poolclass=StaticPool,  # Maintain single connection, prevent pool accumulation
+    echo=False  # Disable SQL logging to reduce memory usage
 )
 
 # Create SessionLocal class
